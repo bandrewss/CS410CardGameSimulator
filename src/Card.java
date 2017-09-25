@@ -5,13 +5,13 @@
 
 
 public class Card {
-	public char suit;
+	public String suit;
 	public int number ;
 
 	/*
 	 * 
 	 */
-	public  Card( char suit, int number) {
+	public  Card( String suit, int number) {
 		this.suit=suit;
 		this.number=number;
 	}
@@ -20,13 +20,13 @@ public class Card {
 	 * 
 	 * 
 	 */
-	public char getSuit () {	
+	public String getSuit () {	
 		return suit;
 	}
 	/*
 	 * 
 	 */
-	public void setSuit(char diffSuit){
+	public void setSuit(String diffSuit){
 		this.suit=diffSuit;	
 	}
 	
@@ -47,6 +47,3 @@ public class Card {
 
 
 }
-
-
-
