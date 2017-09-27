@@ -7,14 +7,12 @@
 
 import java.net.InetAddress;
 
-public class ClientStruct 
-{
+public class ClientStruct {
 	public String name;
 	public InetAddress address;
 	public int port;
-	
-	public ClientStruct(String n, InetAddress a, int p)
-	{
+
+	public ClientStruct(String n, InetAddress a, int p) {
 		name = n;
 		address = a;
 		port = p;
