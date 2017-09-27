@@ -2,13 +2,13 @@
 // CS366 HW3 
 // 6-22-17
 
-public class ServerDriver 
+
+public class Bob 
 {
 
 	public static void main(String[] args) 
 	{
-		Server server = new Server(12321, "127.0.0.1");
-
+		Client client = new Client("Bob", "127.0.0.3", "127.0.0.1", 12321);
 	}
 
 }
