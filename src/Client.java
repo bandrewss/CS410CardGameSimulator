@@ -94,7 +94,7 @@ public class Client extends JFrame {
 	}
 
 	private void sendHelloPacket() {
-		byte[] hello = String.format("$~$` %s", name).getBytes();
+		byte[] hello = String.format("Hello Ready to Start").getBytes();
 
 		DatagramPacket sender = new DatagramPacket(hello, hello.length, serverAddress, port);
 

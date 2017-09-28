@@ -22,7 +22,7 @@ public class Server extends JFrame {
 	final private int PLAYER_1 = 1;
 	final private int PLAYER_2 = 2;
 	final private int MAX_PLAYERS = 3;
-	private ClientStruct clients[] = new ClientStruct[MAX_PLAYERS];
+	private PlayerStruct players[] = new PlayerStruct[MAX_PLAYERS];
 	
 	private int currentTurn = 0;
 	
@@ -53,7 +53,7 @@ public class Server extends JFrame {
 
 		setupGame();
 		
-		startGame();
+		//startGame();
 
 		waitForPackets();
 	}
@@ -61,12 +61,50 @@ public class Server extends JFrame {
 	private void setupGame() {
 		// get deck, shuffle it
 		
-		// wait for three clients to connect
-		// build clients as they connect
+		int playerCount = 0;
+		while(playerCount < 3)
+		{
+			try {
+				byte[] data = new byte[128];
+				DatagramPacket receiver = new DatagramPacket(data, data.length);
+
+				socket.receive(receiver);
+
+				System.out.printf("received packet");
+				if(processHello(receiver, playerCount)) {
+					playerCount++;
+					System.out.printf(" playerCount:%d\n", playerCount);
+				}
+				
+			} catch (IOException e) {
+				System.out.printf("%s\n", e);
+				e.printStackTrace();
+			}
+		}
+		
+		System.out.printf("Three clients");
 		
 		// deal cards
 		
 		// return
+	}
+	
+	public boolean processHello(DatagramPacket packet, int n) {
+		String message = new String(packet.getData(), 0, packet.getLength());
+		InetAddress address = packet.getAddress();
+		
+		boolean unique = message.equals("Hello Ready to Start");
+		
+		for(int i = 0; i < n && unique; ++i) {
+			unique = players[i].address != address;
+		}
+		
+		if(unique) {
+			players[n] = new PlayerStruct(address, packet.getPort());
+			sendHelloToPlayer(players[n], n);
+		}
+		
+		return unique;
 	}
 	
 	private void startGame() {
@@ -124,7 +162,7 @@ public class Server extends JFrame {
 			String data = message.substring(message.indexOf(' '));
 
 			boolean clientExists = false;
-			for (ClientStruct client : clients) {
+			for (PlayerStruct client : players) {
 				if (client != null && client.name.equals(destName)) {
 					// get the name of the sender
 					String name = getNameGivenIP(packet.getAddress());
@@ -145,11 +183,11 @@ public class Server extends JFrame {
 	private int buildNewClient(String name, InetAddress addr, int port) {
 		int madeClient = -1;
 		for (int i = 0; i < MAX_PLAYERS; ++i) {
-			if (clients[i] == null) {
-				clients[i] = new ClientStruct(name, addr, port);
+			if (players[i] == null) {
+				players[i] = new PlayerStruct(addr, port);
 				madeClient = i;
 				break;
-			} else if (name == clients[i].name || addr.equals(clients[i].address))
+			} else if (name == players[i].name || addr.equals(players[i].address))
 				break; // duplicate client
 		}
 
@@ -160,7 +198,7 @@ public class Server extends JFrame {
 	private String getNameGivenIP(InetAddress addr) {
 		String name = null;
 
-		for (ClientStruct client : clients) {
+		for (PlayerStruct client : players) {
 			if (client.address.equals(addr)) {
 				name = client.name;
 				break;
@@ -169,17 +207,30 @@ public class Server extends JFrame {
 
 		return name;
 	}
+	
+	private void sendHelloToPlayer(PlayerStruct player, int n) {
+		byte[] buffer = String.format("Hello, you are player: %1d", n).getBytes();
+
+		DatagramPacket greeter = new DatagramPacket(buffer, buffer.length, player.address, player.port);
+
+		try {
+			socket.send(greeter);
+			appendToDisplay(String.format("Client %d connected.\n", n));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 
 	// in hindsight these four methods should be generalized into one or two...
 
 	private void sendHelloToClient(int cliNum) {
-		byte[] hello = String.format("Hello %s, you are client number: %d\n", clients[cliNum].name, cliNum).getBytes();
+		byte[] hello = String.format("Hello %s, you are client number: %d\n", players[cliNum].name, cliNum).getBytes();
 
-		DatagramPacket greeter = new DatagramPacket(hello, hello.length, clients[cliNum].address, clients[cliNum].port);
+		DatagramPacket greeter = new DatagramPacket(hello, hello.length, players[cliNum].address, players[cliNum].port);
 
 		try {
 			socket.send(greeter);
-			appendToDisplay(String.format("Client %d is %s.\n", cliNum, clients[cliNum].name));
+			appendToDisplay(String.format("Client %d is %s.\n", cliNum, players[cliNum].name));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -209,7 +260,7 @@ public class Server extends JFrame {
 		}
 	}
 
-	private void sendMessageToClient(ClientStruct cli, String sender, String message) {
+	private void sendMessageToClient(PlayerStruct cli, String sender, String message) {
 		byte[] messanger = new String(String.format("%s: %s\n", sender, message)).getBytes();
 
 		DatagramPacket greeter = new DatagramPacket(messanger, messanger.length, cli.address, cli.port);

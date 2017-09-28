@@ -7,13 +7,12 @@
 
 import java.net.InetAddress;
 
-public class ClientStruct {
+public class PlayerStruct {
 	public String name;
 	public InetAddress address;
 	public int port;
 
-	public ClientStruct(String n, InetAddress a, int p) {
-		name = n;
+	public PlayerStruct(InetAddress a, int p) {
 		address = a;
 		port = p;
 	}
