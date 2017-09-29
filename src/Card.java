@@ -44,6 +44,8 @@ public class Card {
 		this.number=diffNum;	
 	}
 	
-
+ public String toString() {
+	return (suit + number);
+ }
 
 }

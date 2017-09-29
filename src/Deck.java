@@ -34,7 +34,14 @@ public class Deck {
     	}//End Reshuffle loop 
     }//End shuffle
 //Deal function to deal the hand to each player
-    public void deal() {
+    public void dealCard( Hand player) {
+		for(int i =0; i<=deckArray.length-1;i++) {
+			if(deckArray[i]!=null){
+			 player.getCard(deckArray[i]);
+			 deckArray[i] = null;
+			 break;
+			}
+		}
     	
     	
     }
