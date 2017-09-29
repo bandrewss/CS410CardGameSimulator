@@ -5,7 +5,7 @@ public class Hand {
 	private Card handArray[]= new Card[17];
 	Card play;
 	Hand(){
-		for(int i =0;i<17;i++) 
+		for(int i =0;i<=handArray.length-1;i++) 
 		{
 			handArray[i] =null;
 		}
@@ -19,7 +19,7 @@ public class Hand {
 	 * in the array of the user
 	 */
 	public void getCard(Card receivedCard) {
-		for(int i = 0;i<17;i++ )
+		for(int i = 0;i<=handArray.length-1;i++ )
 			{
 			 if(handArray[i]==null) {
 				 handArray[i]= receivedCard;
@@ -38,17 +38,34 @@ public class Hand {
 	 * 
 	 */
 	public Card playCard(int i) {
+		if(handArray[i]==null||i>handArray.length) {
+			System.out.println("no card avalible");
+			return null;
+		}
+		else {
 		handArray[i]=  play;
 		handArray[i]= null;
 		return play;
+		}
 		
 	}//End playCard
 	
 	public void showHand() {
-		for(int i =0; i<= handArray.length;i++) {
-			System.out.println(handArray[i].toString());
+		for(int i =0; i<= handArray.length-1;i++) {
+			if(handArray[i]==null) {
+				
+			}
+			else {
+			String showCard=handArray[i].toString();
+			System.out.println(showCard);
+			}
 		}
 	}
 	
+	public String showCard(int postion) {
+		String singleCard=handArray[postion].toString();
+		//System.out.println(singleCard);
+		return singleCard;
+	}
 	
 }

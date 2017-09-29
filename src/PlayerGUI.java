@@ -13,6 +13,9 @@ public class PlayerGUI extends javax.swing.JFrame {
     /**
      * Creates new form CardClient
      */
+
+	Deck ServerDeck = new Deck();
+	Hand PlayerHand= new Hand();
     public PlayerGUI() {
         initComponents();
     }
@@ -25,18 +28,150 @@ public class PlayerGUI extends javax.swing.JFrame {
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">                          
     private void initComponents() {
-
+    	
+    	
+    	ServerDeck.shuffle();
+    	
+    	for(int i =0; i<=17;i++) {
+    		ServerDeck.dealCard(PlayerHand);
+    	}
+    	
         jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
+        jButton3 = new javax.swing.JButton();
+        jButton4 = new javax.swing.JButton();
+        jButton5 = new javax.swing.JButton();
+        jButton6 = new javax.swing.JButton();
+        jButton7 = new javax.swing.JButton();
+        jButton8 = new javax.swing.JButton();
+        jButton9 = new javax.swing.JButton();
+        jButton10 = new javax.swing.JButton();
+        jButton11 = new javax.swing.JButton();
+        jButton12 = new javax.swing.JButton();
+        jButton13 = new javax.swing.JButton();
+        jButton14 = new javax.swing.JButton();
+        jButton15 = new javax.swing.JButton();
+        jButton16 = new javax.swing.JButton();
+        jButton17 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        String heart= "\u2665";
-        Card club2 = new Card(  heart,  2);
-        jButton1.setText(club2.getSuit()+club2.getNum());
-        
+        jButton1.setText(PlayerHand.showCard(0));
         jButton1.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton1ActionPerformed(evt);
+            }
+        });
+
+        jButton2.setText(PlayerHand.showCard(1));
+        jButton2.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton2ActionPerformed(evt);
+            }
+        });
+
+        jButton3.setText(PlayerHand.showCard(2));
+        jButton3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton3ActionPerformed(evt);
+            }
+        });
+
+        jButton4.setText(PlayerHand.showCard(3));
+        jButton4.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton4ActionPerformed(evt);
+            }
+        });
+
+        jButton5.setText(PlayerHand.showCard(4));
+        jButton5.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton5ActionPerformed(evt);
+            }
+        });
+
+        jButton6.setText(PlayerHand.showCard(5));
+        jButton6.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton6ActionPerformed(evt);
+            }
+        });
+
+        jButton7.setText(PlayerHand.showCard(6));
+        jButton7.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton7ActionPerformed(evt);
+            }
+        });
+
+        jButton8.setText(PlayerHand.showCard(7));
+        jButton8.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton8ActionPerformed(evt);
+            }
+        });
+
+        jButton9.setText(PlayerHand.showCard(8));
+        jButton9.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton9ActionPerformed(evt);
+            }
+        });
+
+        jButton10.setText(PlayerHand.showCard(9));
+        jButton10.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton10ActionPerformed(evt);
+            }
+        });
+
+        jButton11.setText(PlayerHand.showCard(10));
+        jButton11.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton11ActionPerformed(evt);
+            }
+        });
+
+        jButton12.setText(PlayerHand.showCard(11));
+        jButton12.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton12ActionPerformed(evt);
+            }
+        });
+
+        jButton13.setText(PlayerHand.showCard(12));
+        jButton13.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton13ActionPerformed(evt);
+            }
+        });
+
+        jButton14.setText(PlayerHand.showCard(13));
+        jButton14.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton14ActionPerformed(evt);
+            }
+        });
+
+        jButton15.setText(PlayerHand.showCard(14));
+        jButton15.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton15ActionPerformed(evt);
+            }
+        });
+
+        jButton16.setText(PlayerHand.showCard(15));
+        jButton16.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton16ActionPerformed(evt);
+            }
+        });
+
+        jButton17.setText(PlayerHand.showCard(16));
+        jButton17.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jButton17ActionPerformed(evt);
             }
         });
 
@@ -45,25 +180,168 @@ public class PlayerGUI extends javax.swing.JFrame {
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(layout.createSequentialGroup()
-                .addGap(191, 191, 191)
+                .addGap(29, 29, 29)
                 .addComponent(jButton1)
-                .addContainerGap(222, Short.MAX_VALUE))
+                .addGap(33, 33, 33)
+                .addComponent(jButton2)
+                .addGap(32, 32, 32)
+                .addComponent(jButton3)
+                .addGap(17, 17, 17)
+                .addComponent(jButton4))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(29, 29, 29)
+                .addComponent(jButton5)
+                .addGap(33, 33, 33)
+                .addComponent(jButton6)
+                .addGap(32, 32, 32)
+                .addComponent(jButton7)
+                .addGap(27, 27, 27)
+                .addComponent(jButton8))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(29, 29, 29)
+                .addComponent(jButton9)
+                .addGap(33, 33, 33)
+                .addComponent(jButton10)
+                .addGap(24, 24, 24)
+                .addComponent(jButton11)
+                .addGap(19, 19, 19)
+                .addComponent(jButton12))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(29, 29, 29)
+                .addComponent(jButton13)
+                .addGap(25, 25, 25)
+                .addComponent(jButton14)
+                .addGap(24, 24, 24)
+                .addComponent(jButton15)
+                .addGap(15, 15, 15)
+                .addComponent(jButton16))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(206, 206, 206)
+                .addComponent(jButton17))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(171, Short.MAX_VALUE)
-                .addComponent(jButton1)
-                .addGap(158, 158, 158))
+            .addGroup(layout.createSequentialGroup()
+                .addGap(105, 105, 105)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton1)
+                    .addComponent(jButton2)
+                    .addComponent(jButton3)
+                    .addComponent(jButton4))
+                .addGap(26, 26, 26)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton8)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(1, 1, 1)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jButton5)
+                            .addComponent(jButton6)
+                            .addComponent(jButton7))))
+                .addGap(27, 27, 27)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton9)
+                    .addComponent(jButton10)
+                    .addComponent(jButton11)
+                    .addGroup(layout.createSequentialGroup()
+                        .addGap(3, 3, 3)
+                        .addComponent(jButton12)))
+                .addGap(15, 15, 15)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton13)
+                    .addComponent(jButton14)
+                    .addComponent(jButton15)
+                    .addComponent(jButton16))
+                .addGap(18, 18, 18)
+                .addComponent(jButton17))
         );
 
         pack();
     }// </editor-fold>                        
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {                                         
-        // TODO add your handling code here:
+    	PlayerHand.playCard(0);
         jButton1.setVisible(false);
     }                                        
+
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {                                         
+    	PlayerHand.playCard(1);
+    	jButton2.setVisible(false);
+    }                                        
+
+    private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {                                         
+    	PlayerHand.playCard(2);
+    	jButton3.setVisible(false);
+    }                                        
+
+    private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) { 
+    	PlayerHand.playCard(3);
+       jButton4.setVisible(false);
+    }                                        
+
+    private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {         
+    	PlayerHand.playCard(4);
+        jButton5.setVisible(false);
+    }                                        
+
+    private void jButton6ActionPerformed(java.awt.event.ActionEvent evt) {    
+    	PlayerHand.playCard(5);
+      jButton6.setVisible(false);
+    }                                        
+
+    private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) { 
+    	PlayerHand.playCard(6);
+        jButton7.setVisible(false);
+    }                                        
+
+    private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {      
+    	PlayerHand.playCard(7);
+        jButton8.setVisible(false);
+    }                                        
+
+    private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {      
+    	PlayerHand.playCard(8);
+       jButton9.setVisible(false);
+    }                                        
+
+    private void jButton10ActionPerformed(java.awt.event.ActionEvent evt) {  
+    	PlayerHand.playCard(9);
+        jButton10.setVisible(false);
+    }                                         
+
+    private void jButton11ActionPerformed(java.awt.event.ActionEvent evt) {      
+    	PlayerHand.playCard(10);
+       jButton11.setVisible(false);
+    }                                         
+
+    private void jButton12ActionPerformed(java.awt.event.ActionEvent evt) {  
+    	PlayerHand.playCard(11);
+        jButton12.setVisible(false);
+    }                                         
+
+    private void jButton13ActionPerformed(java.awt.event.ActionEvent evt) {         
+    	PlayerHand.playCard(12);
+       jButton13.setVisible(false);
+    }                                         
+
+    private void jButton14ActionPerformed(java.awt.event.ActionEvent evt) { 
+    	PlayerHand.playCard(13);
+        jButton14.setVisible(false);
+    }                                         
+
+    private void jButton15ActionPerformed(java.awt.event.ActionEvent evt) {       
+    	PlayerHand.playCard(14);
+        jButton15.setVisible(false);
+    }                                         
+
+    private void jButton16ActionPerformed(java.awt.event.ActionEvent evt) {    
+    	PlayerHand.playCard(15);
+        jButton16.setVisible(false);
+    }                                         
+
+    private void jButton17ActionPerformed(java.awt.event.ActionEvent evt) {     
+    	PlayerHand.playCard(16);
+       jButton17.setVisible(false);
+    }                                         
 
     /**
      * @param args the command line arguments
@@ -102,5 +380,21 @@ public class PlayerGUI extends javax.swing.JFrame {
 
     // Variables declaration - do not modify                     
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton10;
+    private javax.swing.JButton jButton11;
+    private javax.swing.JButton jButton12;
+    private javax.swing.JButton jButton13;
+    private javax.swing.JButton jButton14;
+    private javax.swing.JButton jButton15;
+    private javax.swing.JButton jButton16;
+    private javax.swing.JButton jButton17;
+    private javax.swing.JButton jButton2;
+    private javax.swing.JButton jButton3;
+    private javax.swing.JButton jButton4;
+    private javax.swing.JButton jButton5;
+    private javax.swing.JButton jButton6;
+    private javax.swing.JButton jButton7;
+    private javax.swing.JButton jButton8;
+    private javax.swing.JButton jButton9;
     // End of variables declaration                   
 }

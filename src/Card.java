@@ -7,6 +7,11 @@
 public class Card {
 	public String suit;
 	public int number ;
+	
+	public Card() {
+		this.suit=null;
+		this.number=0;
+	}
 
 	/*
 	 * 
