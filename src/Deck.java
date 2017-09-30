@@ -2,16 +2,17 @@
 public class Deck {
 
 // variables for symbols
-	private String heart= "\u2665";
-	private String spade= "\u2660";
-	private String dimond= "\u2666";
-	private String club= "\u2663";
-	private String suits[]= {heart, spade,dimond,club};
+	final private char HEART= '\u2665';
+	final private char SPADE= '\u2660';
+	final private char DIAMOND= '\u2666';
+	final private char CLUB= '\u2663';
+	
+	final private char suits[]= {HEART, SPADE, DIAMOND, CLUB};
 	
 	//array of 52 cards
 	private Card deckArray[]= new Card[52];
 	
-	
+	//public?
 	Deck(){
 		int index=0;
 		for(int i=0;i<=suits.length-1;i++) {
@@ -39,18 +40,4 @@ public class Deck {
     		
     	}//End Reshuffle loop 
     }//End shuffle
-//Deal function to deal the hand to each player
-    public void dealCard( Hand player) {
-		for(int i =0; i<=deckArray.length-1;i++) {
-			if(deckArray[i]!=null){
-				
-			 player.getCard(deckArray[i]);
-			 deckArray[i] = null;
-			
-			}
-		}
-    	
-    	
-    }
-
 }

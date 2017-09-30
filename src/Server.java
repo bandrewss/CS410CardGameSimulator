@@ -25,6 +25,7 @@ public class Server extends JFrame {
 	private PlayerStruct players[] = new PlayerStruct[MAX_PLAYERS];
 	
 	private int currentTurn = 0;
+	private Deck deck;
 	
 	
 
@@ -59,7 +60,8 @@ public class Server extends JFrame {
 	}
 
 	private void setupGame() {
-		// get deck, shuffle it
+		deck = new Deck();
+		deck.shuffle();
 		
 		int playerCount = 0;
 		while(playerCount < 3)

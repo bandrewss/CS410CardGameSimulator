@@ -5,18 +5,18 @@
 
 
 public class Card {
-	public String suit;
-	public int number ;
+	final private char HEART= '\u2665';
+	final private char SPADE= '\u2660';
+	final private char DIAMOND= '\u2666';
+	final private char CLUB= '\u2663';
 	
-	public Card() {
-		this.suit=null;
-		this.number=0;
-	}
+	public char suit;
+	public int number ;
 
 	/*
 	 * 
 	 */
-	public  Card( String suit, int number) {
+	public  Card( char suit, int number) {
 		this.suit=suit;
 		this.number=number;
 	}
@@ -25,13 +25,13 @@ public class Card {
 	 * 
 	 * 
 	 */
-	public String getSuit () {	
+	public char getSuit () {	
 		return suit;
 	}
 	/*
 	 * 
 	 */
-	public void setSuit(String diffSuit){
+	public void setSuit(char diffSuit){
 		this.suit=diffSuit;	
 	}
 	
@@ -50,7 +50,7 @@ public class Card {
 	}
 	
  public String toString() {
-	return (suit + number);
+	return String.format("%c%s", suit, number);
  }
 
 }
