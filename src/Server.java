@@ -23,7 +23,7 @@ public class Server extends JFrame {
 	final private int MAX_PLAYERS = 3;
 	private PlayerStruct players[] = new PlayerStruct[MAX_PLAYERS];
 	
-	private int currentTurn = 0;
+	private int currentTurn;
 	private Deck deck;
 	
 	
@@ -63,8 +63,6 @@ public class Server extends JFrame {
 		setupGame();
 		
 		startGame();
-
-		waitForPackets();
 	}
 
 	/*
@@ -74,28 +72,18 @@ public class Server extends JFrame {
 		deck = new Deck();
 		deck.shuffle();
 		
+		currentTurn = PLAYER_0;
+		
 		int playerCount = 0;
+		DatagramPacket packet;
 		while(playerCount < 3)
 		{
-			try {
-				byte[] data = new byte[128];
-				DatagramPacket receiver = new DatagramPacket(data, data.length);
-
-				socket.receive(receiver);
-
-				System.out.printf("received packet");
-				if(processHello(receiver, playerCount)) {
-					playerCount++;
-					System.out.printf(" playerCount:%d\n", playerCount);
-				}
-				
-			} catch (IOException e) {
-				System.out.printf("%s\n", e);
-				e.printStackTrace();
+			packet = waitForPacket();
+			
+			if(processHello(packet, playerCount)) {
+				++playerCount;
 			}
 		}
-		
-		System.out.printf("Three clients");
 		
 		dealCards();
 		
@@ -120,9 +108,18 @@ public class Server extends JFrame {
 	 * After every player has a hand, starts the gameplay.
 	 */
 	private void startGame() {
-		// tell the player who starts its there turn
+		DatagramPacket packet;
+		Card card;
 		
-		// pass the turn as needed
+		sendTurnToPlayer(players[currentTurn], currentTurn);
+		while(!ackPlayerAcceptTurn(players[currentTurn], currentTurn));
+		
+		packet = waitForPacket();
+		while((card = processCardPlay(players[currentTurn], currentTurn, packet)) == null);
+		// XXX validate the card play against player's hand
+		sendClearToPlayCard(players[currentTurn], card);
+		
+		// keep track of trick, pass the turn
 		
 		// proclaim winner of trick
 		// keep track of score
@@ -134,23 +131,21 @@ public class Server extends JFrame {
 	}
 	
 	/*
-	 * Waits for packet to come in and processes it.
+	 * Waits for a packet to come in and returns it.
 	 */
-	private void waitForPackets() {
-		for (;;) {
-			try {
-				byte[] data = new byte[128];
-				DatagramPacket receiver = new DatagramPacket(data, data.length);
+	private DatagramPacket waitForPacket() {
+		DatagramPacket packet = null;
+		
+		try {
+			byte[] data = new byte[128];
+			packet = new DatagramPacket(data, data.length);
 
-				socket.receive(receiver);
-
-				processPacket(receiver);
-			} catch (IOException e) {
-				System.out.printf("%s\n", e);
-				e.printStackTrace();
-			}
+			socket.receive(packet);
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-
+		
+		return packet;
 	}
 	
 	/*
@@ -189,7 +184,40 @@ public class Server extends JFrame {
 
 		try {
 			socket.send(greeter);
-			appendToDisplay(String.format("Client %d connected.", n));
+			appendToDisplay(String.format("Player%d connected.", n));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/*
+	 * Process a card play by player, return the card.
+	 */
+	private Card processCardPlay(PlayerStruct player, int n, DatagramPacket packet) {
+		String message = new String(packet.getData(), 0, packet.getLength());
+		InetAddress address = packet.getAddress();
+		Card card = null;
+		
+		// validate that the card came from the correct player
+		if(address.equals(player.address)) {
+			char suit = message.charAt(0);
+			int number = Integer.parseInt(message.substring(1).trim());
+			
+			card = new Card(suit, number);
+		}
+		
+		
+		return card;
+	}
+	
+	private void sendClearToPlayCard(PlayerStruct player, Card card) {
+		byte[] buffer = String.format("%c%d", card.getSuit(), card.getNum()).getBytes();
+
+		DatagramPacket message = new DatagramPacket(buffer, buffer.length, player.address, player.port);
+
+		try {
+			socket.send(message);
+			appendToDisplay(String.format("Player%d played %c%d", currentTurn, card.getSuit(), card.getNum()));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -210,6 +238,42 @@ public class Server extends JFrame {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	/*
+	 * Send a player their turn
+	 * Parameters: A player, their player number
+	 */
+	private void sendTurnToPlayer(PlayerStruct player, int n) {
+		byte[] buffer = String.format("Your turn").getBytes();
+
+		DatagramPacket cardPacket = new DatagramPacket(buffer, buffer.length, player.address, player.port);
+		
+		try {
+			socket.send(cardPacket);
+			appendToDisplay(String.format("Player%d's turn", n));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/*
+	 * Acks that a player received their turn
+	 * Parameters: A player, their player number
+	 */
+	private boolean ackPlayerAcceptTurn(PlayerStruct player, int n) {
+		DatagramPacket packet = waitForPacket();
+		
+		String message = new String(packet.getData(), 0, packet.getLength());
+		InetAddress address = packet.getAddress();
+		
+		boolean correct = message.equals("My turn") && address.equals(player.address);
+				
+		if(correct) {
+			appendToDisplay(String.format("Player%d accepted turn", currentTurn));
+		}
+		
+		return correct;
 	}
 	
 	/*

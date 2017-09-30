@@ -29,7 +29,9 @@ public class Hand {
 	 * in the array of the user
 	 */
 	public void recieveCard(char suit, int number) {
-		if(handSize < MAX_HAND_SIZE) {
+		if(handSize < MAX_HAND_SIZE)
+		if(suit == SPADE || suit == CLUB || suit == DIAMOND || suit == HEART)
+		if(number >= 1 && number <= 14) {
 			handArray[handSize] = new Card(suit, number);
 			++handSize;
 		}
@@ -75,6 +77,9 @@ public class Hand {
 		return singleCard;
 	}
 	
+	/*
+	 * Returns true if the players hand is full
+	 */
 	public boolean isFull() {
 		return !(handSize < MAX_HAND_SIZE);
 		

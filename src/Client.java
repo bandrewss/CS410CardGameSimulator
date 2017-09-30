@@ -3,7 +3,13 @@
 // 9-27-17
 
 // XXX when real GUI is implemented all 'appendToDisplay's can be changed to prints
-//     *for debugging purposes
+//      *for debugging purposes
+
+// XXX currently messages are hand typed, all actual GUI will have to do is return
+//      proper string when button is pressed
+
+// XXX some methods will have to be changed from private to public for GUI to 
+//      interact with them
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -42,11 +48,14 @@ public class Client extends JFrame implements Runnable {
 	enum GameState {
 		GET_HELLO,
 		GET_HAND,
-		AWAIT_TURN
+		AWAIT_TURN,
+		MY_TURN,
+		AWAIT_TRICK_COMPLETION
 	} GameState gameState;
 	
 	private Hand hand;
-	boolean myTurn;
+	private int lastCardPlayed; // keeps track of the last played card for verification
+	
 
 	/*
 	 * Sets up socket and builds simple GUI
@@ -73,7 +82,7 @@ public class Client extends JFrame implements Runnable {
 		messageArea = new JTextField("Enter your message here");
 		messageArea.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent event) {
-				sendPacketTo(event.getActionCommand());
+				sendPacket(event.getActionCommand());
 			}
 		});
 
@@ -93,9 +102,25 @@ public class Client extends JFrame implements Runnable {
 	 * Starts the client game logic.
 	 */
 	public void go() {
-		sendHelloPacket(); // makes initial contact with server
+		sendPacket("Hello Ready to Start"); // makes initial contact with server
 		
 		waitForPackets();
+	}
+	
+	/*
+	 * Sends datagram packet containing given string to server
+	 * Parameters: a string
+	 */
+	private void sendPacket(String s) {
+		byte[] message = s.getBytes();
+
+		DatagramPacket packet = new DatagramPacket(message, message.length, serverAddress, port);
+
+		try {
+			socket.send(packet);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 
 	/*
@@ -140,26 +165,28 @@ public class Client extends JFrame implements Runnable {
 				
 				break;
 			case AWAIT_TURN:
+				if(message.equals("Your turn")) {
+					// ack turn
+					sendPacket("My turn");
+					gameState = GameState.MY_TURN;
+				}
+				break;
+			case MY_TURN:
+				if(message.equals(hand.showCard(lastCardPlayed))) {
+					// play the card
+					sendPacket(hand.showCard(lastCardPlayed));
+					hand.playCard(lastCardPlayed);
+					gameState = GameState.AWAIT_TRICK_COMPLETION;
+				}
+				break;
+			case AWAIT_TRICK_COMPLETION:
+				break;
 				
 		}
 		
 		appendToDisplay(message);
 	}
 
-	/*
-	 * Sends a 'hello' packet to server to tell it to add us to the game
-	 */
-	private void sendHelloPacket() {
-		byte[] hello = String.format("Hello Ready to Start").getBytes();
-
-		DatagramPacket sender = new DatagramPacket(hello, hello.length, serverAddress, port);
-
-		try {
-			socket.send(sender);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
 
 	/*
 	 * Adds given string to dummy gui
