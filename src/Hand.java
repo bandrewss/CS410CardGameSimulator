@@ -4,11 +4,13 @@ public class Hand {
 	final private char SPADE= '\u2660';
 	final private char DIAMOND= '\u2666';
 	final private char CLUB= '\u2663';
+	final private int MAX_HAND_SIZE = 17;
 	
-	int handSize = 0;
+	private int handSize = 0;
+	
 
 	
-	private Card handArray[]= new Card[17];
+	private Card handArray[]= new Card[MAX_HAND_SIZE];
 	Card play;
 	
 	//public?
@@ -26,17 +28,12 @@ public class Hand {
 	 * task card objects and add it to the closes open spot
 	 * in the array of the user
 	 */
-	public void getCard(char suit, int number) {
-		for(int i = 0;i<=handArray.length-1;i++ )
-			{
-			 if(handArray[i]==null) {
-				 //handArray[i]= receivedCard;
-				 break;
-			 }
-				
-			}
-				
-	}// End getCard
+	public void recieveCard(char suit, int number) {
+		if(handSize < MAX_HAND_SIZE) {
+			handArray[handSize] = new Card(suit, number);
+			++handSize;
+		}
+	}
 	
 	/*
 	 * playCard Method
@@ -59,6 +56,8 @@ public class Hand {
 	}//End playCard
 	
 	public void showHand() {
+		System.out.println("am here");
+		
 		for(int i =0; i<= handArray.length-1;i++) {
 			if(handArray[i]==null) {
 				
@@ -74,6 +73,11 @@ public class Hand {
 		String singleCard=handArray[postion].toString();
 		//System.out.println(singleCard);
 		return singleCard;
+	}
+	
+	public boolean isFull() {
+		return !(handSize < MAX_HAND_SIZE);
+		
 	}
 	
 }

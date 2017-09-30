@@ -51,6 +51,7 @@ public class Server extends JFrame {
 		setTitle("Server");
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);
+		setAlwaysOnTop(true);
 
 		setupGame();
 		
@@ -86,9 +87,20 @@ public class Server extends JFrame {
 		
 		System.out.printf("Three clients");
 		
-		// deal cards
+		dealCards();
 		
 		// return
+	}
+	
+	private boolean dealCards() {
+		int playerNumber;
+		
+		for(int i = 0; i < 51; ++i) {
+			playerNumber = i % 3;
+			sendCardToPlayer(players[playerNumber], playerNumber, deck.pop());
+		}
+		
+		return false;
 	}
 	
 	public boolean processHello(DatagramPacket packet, int n) {
@@ -210,6 +222,10 @@ public class Server extends JFrame {
 		return name;
 	}
 	
+	/*
+	 * Let the player know they have joined the game.
+	 * Parameters: A player, and their player number
+	 */
 	private void sendHelloToPlayer(PlayerStruct player, int n) {
 		byte[] buffer = String.format("Hello, you are player: %1d", n).getBytes();
 
@@ -217,12 +233,46 @@ public class Server extends JFrame {
 
 		try {
 			socket.send(greeter);
-			appendToDisplay(String.format("Client %d connected.\n", n));
+			appendToDisplay(String.format("Client %d connected.", n));
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 
+	/*
+	 * Send a player a card.
+	 * Parameters: A player, their player number, and a card
+	 */
+	private void sendCardToPlayer(PlayerStruct player, int n, Card card) {
+		byte[] buffer = String.format("Card: %c%d", card.getSuit(), card.getNum()).getBytes();
+
+		DatagramPacket cardPacket = new DatagramPacket(buffer, buffer.length, player.address, player.port);
+		
+		try {
+			socket.send(cardPacket);
+			appendToDisplay(String.format("Sent player%d Card: %c%s", n, card.getSuit(), card.getNum()));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	////////////////////////////////////////////////////////
+	// old methods kept around for reference, ignore them //
+	////////////////////////////////////////////////////////
+	
 	// in hindsight these four methods should be generalized into one or two...
 
 	private void sendHelloToClient(int cliNum) {
@@ -278,7 +328,7 @@ public class Server extends JFrame {
 	private void appendToDisplay(String s) {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				display.append(s);
+				display.append(String.format("%s\n", s));
 			}
 		});
 	}

@@ -36,6 +36,15 @@ public class Client extends JFrame {
 
 	private JTextArea display;
 	private JTextField messageArea;
+	
+	enum GameState {
+		GET_HELLO,
+		GET_HAND,
+		AWAIT_TURN
+	} GameState gameState;
+	
+	private Hand hand;
+	boolean myTurn;
 
 	public Client(String n, String myAddr, String serverAddr, int p) {
 		name = n;
@@ -67,8 +76,13 @@ public class Client extends JFrame {
 		setTitle(name);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);
+		setAlwaysOnTop(true);
+		
+		gameState = GameState.GET_HELLO;
+		hand = new Hand();
 
 		sendHelloPacket(); // makes initial contact with server
+		
 		waitForPackets();
 	}
 
@@ -90,7 +104,28 @@ public class Client extends JFrame {
 	}
 
 	private void processPacket(DatagramPacket packet) {
-		appendToDisplay(new String(packet.getData(), 0, packet.getLength()));
+		String message = new String(packet.getData(), 0, packet.getLength());
+		
+		switch(gameState) {
+			case GET_HELLO:
+				gameState = GameState.GET_HAND;
+				break;
+			case GET_HAND:
+				// get suit and number from message
+				hand.recieveCard(message.charAt(6), Integer.parseInt(message.substring(7).trim()));
+				
+				if(hand.isFull()) {
+					gameState = GameState.AWAIT_TURN;
+				}
+				
+				break;
+			case AWAIT_TURN:
+				
+		}
+		
+		
+		
+		appendToDisplay(message);
 	}
 
 	private void sendHelloPacket() {
@@ -120,7 +155,7 @@ public class Client extends JFrame {
 	private void appendToDisplay(String s) {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
-				display.append(s);
+				display.append(String.format("%s\n", s));
 			}
 		});
 	}

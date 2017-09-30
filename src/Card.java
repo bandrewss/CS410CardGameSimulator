@@ -16,7 +16,7 @@ public class Card {
 	/*
 	 * 
 	 */
-	public  Card( char suit, int number) {
+	public Card( char suit, int number) {
 		this.suit=suit;
 		this.number=number;
 	}

@@ -6,11 +6,14 @@ public class Deck {
 	final private char SPADE= '\u2660';
 	final private char DIAMOND= '\u2666';
 	final private char CLUB= '\u2663';
+	final private int DECK_SIZE = 52;
 	
 	final private char suits[]= {HEART, SPADE, DIAMOND, CLUB};
 	
 	//array of 52 cards
-	private Card deckArray[]= new Card[52];
+	private int cardCount = DECK_SIZE;
+	private Card deckArray[]= new Card[DECK_SIZE];
+	
 	
 	//public?
 	Deck(){
@@ -40,4 +43,26 @@ public class Deck {
     		
     	}//End Reshuffle loop 
     }//End shuffle
+    
+    public Card pop() {
+    	int cardIndex = cardCount -1;
+    	Card returnCard = null;
+    	
+    	if(cardIndex >= 0) {
+    		returnCard = deckArray[cardIndex];
+    		--cardCount;
+    	}
+    	
+    	return returnCard;
+    }
 }
+
+
+
+
+
+
+
+
+
+
