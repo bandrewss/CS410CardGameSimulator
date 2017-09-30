@@ -155,7 +155,7 @@ public class Server extends JFrame {
 	 * Parameters: a datagram packet, and a player index
 	 * 
 	 */
-	public boolean processHello(DatagramPacket packet, int n) {
+	private boolean processHello(DatagramPacket packet, int n) {
 		String message = new String(packet.getData(), 0, packet.getLength());
 		InetAddress address = packet.getAddress();
 		
