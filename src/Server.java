@@ -52,7 +52,9 @@ public class Server extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);
 		setAlwaysOnTop(true);
-
+	}
+	
+	public void go() {
 		setupGame();
 		
 		//startGame();
@@ -89,7 +91,7 @@ public class Server extends JFrame {
 		
 		dealCards();
 		
-		// return
+		appendToDisplay("\nStarting Game:");
 	}
 	
 	private boolean dealCards() {

@@ -25,7 +25,7 @@ import javax.swing.JTextField;
 import javax.swing.SwingUtilities;
 
 @SuppressWarnings("serial")
-public class Client extends JFrame {
+public class Client extends JFrame implements Runnable {
 
 	private InetAddress serverAddress;
 	private InetAddress myAddress;
@@ -80,7 +80,9 @@ public class Client extends JFrame {
 		
 		gameState = GameState.GET_HELLO;
 		hand = new Hand();
-
+	}
+	
+	public void go() {
 		sendHelloPacket(); // makes initial contact with server
 		
 		waitForPackets();
@@ -158,5 +160,9 @@ public class Client extends JFrame {
 				display.append(String.format("%s\n", s));
 			}
 		});
+	}
+	
+	public void run() {
+		go();
 	}
 }
