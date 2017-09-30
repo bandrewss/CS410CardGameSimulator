@@ -1,9 +1,17 @@
 
 public class Hand {
+	final private char HEART= '\u2665';
+	final private char SPADE= '\u2660';
+	final private char DIAMOND= '\u2666';
+	final private char CLUB= '\u2663';
+	
+	int handSize = 0;
 
 	
 	private Card handArray[]= new Card[17];
 	Card play;
+	
+	//public?
 	Hand(){
 		for(int i =0;i<=handArray.length-1;i++) 
 		{
@@ -18,11 +26,11 @@ public class Hand {
 	 * task card objects and add it to the closes open spot
 	 * in the array of the user
 	 */
-	public void getCard(Card receivedCard) {
+	public void getCard(char suit, int number) {
 		for(int i = 0;i<=handArray.length-1;i++ )
 			{
 			 if(handArray[i]==null) {
-				 handArray[i]= receivedCard;
+				 //handArray[i]= receivedCard;
 				 break;
 			 }
 				
