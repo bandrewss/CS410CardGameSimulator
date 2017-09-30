@@ -1,6 +1,4 @@
-// Ben Andrews
-// CS366 HW3 
-// 6-22-17
+// starts the server
 
 public class ServerDriver 
 {

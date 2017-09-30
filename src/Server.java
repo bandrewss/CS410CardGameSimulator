@@ -1,7 +1,6 @@
-
-// Ben Andrews
-// CS366 HW3 
-// 6-22-17
+// Ben Andrews, Isaiah Paulson
+// Server for CS410 Card game
+// 9-27-17
 
 import java.awt.BorderLayout;
 import java.io.IOException;
@@ -34,6 +33,9 @@ public class Server extends JFrame {
 
 	private JTextArea display;
 
+	/*
+	 * Sets up socket and builds simple GUI
+	 */
 	public Server(int port, String addr) {
 		try {
 			address = InetAddress.getByName(addr);
@@ -54,14 +56,20 @@ public class Server extends JFrame {
 		setAlwaysOnTop(true);
 	}
 	
+	/*
+	 * Starts the game logic.
+	 */
 	public void go() {
 		setupGame();
 		
-		//startGame();
+		startGame();
 
 		waitForPackets();
 	}
 
+	/*
+	 * Waits for three players to connect sets up the game.
+	 */
 	private void setupGame() {
 		deck = new Deck();
 		deck.shuffle();
@@ -94,6 +102,9 @@ public class Server extends JFrame {
 		appendToDisplay("\nStarting Game:");
 	}
 	
+	/*
+	 * Deals each player 17 cards (entire deck -1)
+	 */
 	private boolean dealCards() {
 		int playerNumber;
 		
@@ -105,6 +116,50 @@ public class Server extends JFrame {
 		return false;
 	}
 	
+	/*
+	 * After every player has a hand, starts the gameplay.
+	 */
+	private void startGame() {
+		// tell the player who starts its there turn
+		
+		// pass the turn as needed
+		
+		// proclaim winner of trick
+		// keep track of score
+		// start next round
+		
+		
+		// proclaim winner
+		// check to see if rematch is wanted.
+	}
+	
+	/*
+	 * Waits for packet to come in and processes it.
+	 */
+	private void waitForPackets() {
+		for (;;) {
+			try {
+				byte[] data = new byte[128];
+				DatagramPacket receiver = new DatagramPacket(data, data.length);
+
+				socket.receive(receiver);
+
+				processPacket(receiver);
+			} catch (IOException e) {
+				System.out.printf("%s\n", e);
+				e.printStackTrace();
+			}
+		}
+
+	}
+	
+	/*
+	 * Processes a player hello packet. 
+	 * Makes sure the player sent proper hello message,
+	 * and that they have a unique IP address.
+	 * Parameters: a datagram packet, and a player index
+	 * 
+	 */
 	public boolean processHello(DatagramPacket packet, int n) {
 		String message = new String(packet.getData(), 0, packet.getLength());
 		InetAddress address = packet.getAddress();
@@ -123,37 +178,71 @@ public class Server extends JFrame {
 		return unique;
 	}
 	
-	private void startGame() {
-		// tell the player who starts its there turn
-		
-		// pass the turn as needed
-		
-		// proclaim winner of trick
-		// keep track of score
-		// start next round
-		
-		
-		// proclaim winner
-		// check to see if rematch is wanted.
-	}
+	/*
+	 * Let the player know they have joined the game.
+	 * Parameters: A player, and their player number
+	 */
+	private void sendHelloToPlayer(PlayerStruct player, int n) {
+		byte[] buffer = String.format("Hello, you are player: %1d", n).getBytes();
 
-	private void waitForPackets() {
-		for (;;) {
-			try {
-				byte[] data = new byte[128];
-				DatagramPacket receiver = new DatagramPacket(data, data.length);
+		DatagramPacket greeter = new DatagramPacket(buffer, buffer.length, player.address, player.port);
 
-				socket.receive(receiver);
-
-				processPacket(receiver);
-			} catch (IOException e) {
-				System.out.printf("%s\n", e);
-				e.printStackTrace();
-			}
+		try {
+			socket.send(greeter);
+			appendToDisplay(String.format("Client %d connected.", n));
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
-
 	}
 
+	/*
+	 * Send a player a card.
+	 * Parameters: A player, their player number, and a card
+	 */
+	private void sendCardToPlayer(PlayerStruct player, int n, Card card) {
+		byte[] buffer = String.format("Card: %c%d", card.getSuit(), card.getNum()).getBytes();
+
+		DatagramPacket cardPacket = new DatagramPacket(buffer, buffer.length, player.address, player.port);
+		
+		try {
+			socket.send(cardPacket);
+			appendToDisplay(String.format("Sent player%d Card: %c%s", n, card.getSuit(), card.getNum()));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/*
+	 * Add a string to the GUI console.
+	 * Parameters: A string to append.
+	 */
+	private void appendToDisplay(String s) {
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				display.append(String.format("%s\n", s));
+			}
+		});
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	////////////////////////////////////////////////////////
+	// old methods kept around for reference, ignore them //
+	////////////////////////////////////////////////////////
+	
+	// in hindsight these four methods should be generalized into one or two...
+	
 	private void processPacket(DatagramPacket packet) {
 		InetAddress address = packet.getAddress();
 		int port = packet.getPort();
@@ -194,88 +283,6 @@ public class Server extends JFrame {
 				sendClientNotFoundPacket(address, port, destName);
 		}
 	}
-
-	// returns -1 on failure, else the index of the client in the array
-	private int buildNewClient(String name, InetAddress addr, int port) {
-		int madeClient = -1;
-		for (int i = 0; i < MAX_PLAYERS; ++i) {
-			if (players[i] == null) {
-				players[i] = new PlayerStruct(addr, port);
-				madeClient = i;
-				break;
-			} else if (name == players[i].name || addr.equals(players[i].address))
-				break; // duplicate client
-		}
-
-		return madeClient;
-	}
-
-	// returns the name of a client given an IP
-	private String getNameGivenIP(InetAddress addr) {
-		String name = null;
-
-		for (PlayerStruct client : players) {
-			if (client.address.equals(addr)) {
-				name = client.name;
-				break;
-			}
-		}
-
-		return name;
-	}
-	
-	/*
-	 * Let the player know they have joined the game.
-	 * Parameters: A player, and their player number
-	 */
-	private void sendHelloToPlayer(PlayerStruct player, int n) {
-		byte[] buffer = String.format("Hello, you are player: %1d", n).getBytes();
-
-		DatagramPacket greeter = new DatagramPacket(buffer, buffer.length, player.address, player.port);
-
-		try {
-			socket.send(greeter);
-			appendToDisplay(String.format("Client %d connected.", n));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-
-	/*
-	 * Send a player a card.
-	 * Parameters: A player, their player number, and a card
-	 */
-	private void sendCardToPlayer(PlayerStruct player, int n, Card card) {
-		byte[] buffer = String.format("Card: %c%d", card.getSuit(), card.getNum()).getBytes();
-
-		DatagramPacket cardPacket = new DatagramPacket(buffer, buffer.length, player.address, player.port);
-		
-		try {
-			socket.send(cardPacket);
-			appendToDisplay(String.format("Sent player%d Card: %c%s", n, card.getSuit(), card.getNum()));
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-	}
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	////////////////////////////////////////////////////////
-	// old methods kept around for reference, ignore them //
-	////////////////////////////////////////////////////////
-	
-	// in hindsight these four methods should be generalized into one or two...
 
 	private void sendHelloToClient(int cliNum) {
 		byte[] hello = String.format("Hello %s, you are client number: %d\n", players[cliNum].name, cliNum).getBytes();
@@ -326,13 +333,38 @@ public class Server extends JFrame {
 			e.printStackTrace();
 		}
 	}
-
-	private void appendToDisplay(String s) {
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				display.append(String.format("%s\n", s));
+	
+	// returns -1 on failure, else the index of the client in the array
+		private int buildNewClient(String name, InetAddress addr, int port) {
+			int madeClient = -1;
+			for (int i = 0; i < MAX_PLAYERS; ++i) {
+				if (players[i] == null) {
+					players[i] = new PlayerStruct(addr, port);
+					madeClient = i;
+					break;
+				} else if (name == players[i].name || addr.equals(players[i].address))
+					break; // duplicate client
 			}
-		});
-	}
 
+			return madeClient;
+		}
+
+		// returns the name of a client given an IP
+		private String getNameGivenIP(InetAddress addr) {
+			String name = null;
+
+			for (PlayerStruct client : players) {
+				if (client.address.equals(addr)) {
+					name = client.name;
+					break;
+				}
+			}
+
+			return name;
+		}
 }
+
+
+
+
+

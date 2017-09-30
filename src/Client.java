@@ -1,7 +1,9 @@
+// Ben Andrews, Isaiah Paulson
+// Client for CS410 Card game
+// 9-27-17
 
-// Ben Andrews
-// CS366 HW3 
-// 6-22-17
+// XXX when real GUI is implemented all 'appendToDisplay's can be changed to prints
+//     *for debugging purposes
 
 import java.awt.BorderLayout;
 import java.awt.Component;
@@ -46,6 +48,11 @@ public class Client extends JFrame implements Runnable {
 	private Hand hand;
 	boolean myTurn;
 
+	/*
+	 * Sets up socket and builds simple GUI
+	 * 
+	 * XXX have client create real GUI
+	 */
 	public Client(String n, String myAddr, String serverAddr, int p) {
 		name = n;
 		port = p;
@@ -82,12 +89,18 @@ public class Client extends JFrame implements Runnable {
 		hand = new Hand();
 	}
 	
+	/*
+	 * Starts the client game logic.
+	 */
 	public void go() {
 		sendHelloPacket(); // makes initial contact with server
 		
 		waitForPackets();
 	}
 
+	/*
+	 * Waits for packet to come in and processes it.
+	 */
 	private void waitForPackets() {
 		for (;;) {
 			try {
@@ -104,7 +117,12 @@ public class Client extends JFrame implements Runnable {
 		}
 
 	}
-
+	
+	/*
+	 * Processes packet, treats it differently based on current gamestate.
+	 * In charge of changing gamestate when appropriate.
+	 * Parameters: a datagram packet
+	 */
 	private void processPacket(DatagramPacket packet) {
 		String message = new String(packet.getData(), 0, packet.getLength());
 		
@@ -125,11 +143,12 @@ public class Client extends JFrame implements Runnable {
 				
 		}
 		
-		
-		
 		appendToDisplay(message);
 	}
 
+	/*
+	 * Sends a 'hello' packet to server to tell it to add us to the game
+	 */
 	private void sendHelloPacket() {
 		byte[] hello = String.format("Hello Ready to Start").getBytes();
 
@@ -142,6 +161,35 @@ public class Client extends JFrame implements Runnable {
 		}
 	}
 
+	/*
+	 * Adds given string to dummy gui
+	 */
+	private void appendToDisplay(String s) {
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				display.append(String.format("%s\n", s));
+			}
+		});
+	}
+	
+	// allows multiple clients be run from one class
+	public void run() {
+		go();
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	////////////////////////////////////////////////////////
+	// old methods kept around for reference, ignore them //
+	////////////////////////////////////////////////////////
+	
 	private void sendPacketTo(String message) {
 		byte[] data = message.getBytes();
 
@@ -153,16 +201,10 @@ public class Client extends JFrame implements Runnable {
 			e.printStackTrace();
 		}
 	}
-
-	private void appendToDisplay(String s) {
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				display.append(String.format("%s\n", s));
-			}
-		});
-	}
-	
-	public void run() {
-		go();
-	}
 }
+
+
+
+
+
+
