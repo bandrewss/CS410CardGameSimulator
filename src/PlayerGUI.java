@@ -33,7 +33,7 @@ public class PlayerGUI extends javax.swing.JFrame {
     	ServerDeck.shuffle();
     	
     	for(int i =0; i<=17;i++) {
-    		ServerDeck.dealCard(PlayerHand);
+    		ServerDeck.pop();
     	}
     	
         jButton1 = new javax.swing.JButton();
