@@ -101,7 +101,7 @@ public class Server extends JFrame {
 			playerNumber = i % 3;
 			card = deck.pop();
 			sendCardToPlayer(players[playerNumber], playerNumber, card);
-			players[i].hand.recieveCard(card.getSuit(), card.getNum());
+			players[playerNumber].hand.recieveCard(card.getSuit(), card.getNum());
 		}
 		
 		return false;
