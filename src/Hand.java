@@ -57,6 +57,25 @@ public class Hand {
 		
 	}//End playCard
 	
+	/*
+	 * If the given card is in the hand, it is set to null.
+	 * Parameter: A card to find in the hand.
+	 * Return: If the card was removed.
+	 */
+	public boolean removeCard(Card card) {
+		boolean containedCard = false;
+		
+		for(Card testCard:handArray) {
+			if(card.toString().equals(testCard.toString())) {
+				containedCard = true;
+				testCard = null;
+				break;
+			}
+		}
+		
+		return containedCard;
+	}
+	
 	public void showHand() {
 		System.out.println("am here");
 		

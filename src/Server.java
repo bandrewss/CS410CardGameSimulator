@@ -232,7 +232,7 @@ public class Server extends JFrame {
 			
 			card = new Card(suit, number);
 			
-			if(!player.hand.containsCard(card)) {
+			if(!player.hand.removeCard(card)) {
 				card = null;
 			}
 		}
@@ -245,6 +245,8 @@ public class Server extends JFrame {
 		byte[] buffer = String.format("%c%d", card.getSuit(), card.getNum()).getBytes();
 
 		DatagramPacket message = new DatagramPacket(buffer, buffer.length, player.address, player.port);
+		
+		player.hand.removeCard(card);
 
 		try {
 			socket.send(message);
