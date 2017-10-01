@@ -51,7 +51,7 @@ public class Client extends JFrame implements Runnable {
 		AWAIT_TURN,
 		MY_TURN,
 		AWAIT_TRICK_COMPLETION
-	} GameState gameState;
+	} private GameState gameState;
 	
 	private Hand hand;
 	private int lastCardPlayed; // keeps track of the last played card for verification

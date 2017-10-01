@@ -26,7 +26,11 @@ public class Server extends JFrame {
 	private int currentTurn;
 	private Deck deck;
 	
-	
+	private enum TurnCycle {
+		FIRST_PLAY,
+		SECOND_PLAY,
+		LAST_PLAY
+	} private TurnCycle turnCycle;
 
 	private DatagramSocket socket;
 	private InetAddress address;
@@ -117,9 +121,7 @@ public class Server extends JFrame {
 		sendTurnToPlayer(players[currentTurn], currentTurn);
 		while(!ackPlayerAcceptTurn(players[currentTurn], currentTurn));
 		
-		packet = waitForPacket();
-		while((card = processCardPlay(players[currentTurn], currentTurn, packet)) == null);
-		// XXX validate the card play against player's hand
+		while( (card = processCardPlay(players[currentTurn], currentTurn, waitForPacket() )) == null);
 		sendClearToPlayCard(players[currentTurn], card);
 		
 		// keep track of trick, pass the turn
@@ -222,12 +224,17 @@ public class Server extends JFrame {
 		InetAddress address = packet.getAddress();
 		Card card = null;
 		
-		// validate that the card came from the correct player
+		// validate that the card came from the correct player,
+		//  and that the player had that card in their hand
 		if(address.equals(player.address)) {
 			char suit = message.charAt(0);
 			int number = Integer.parseInt(message.substring(1).trim());
 			
 			card = new Card(suit, number);
+			
+			if(!player.hand.containsCard(card)) {
+				card = null;
+			}
 		}
 		
 		

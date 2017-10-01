@@ -85,4 +85,20 @@ public class Hand {
 		
 	}
 	
+	/*
+	 * Returns true if the given card exists in the hand
+	 * Parameter: a card to validate.
+	 */
+	public boolean containsCard(Card checkCard) {
+		boolean found = false;
+		
+		for(Card testCard:handArray) {
+			if(checkCard.toString().equals(testCard.toString())) {
+				found = true;
+				break;
+			}
+		}
+		
+		return found;
+	}
 }
