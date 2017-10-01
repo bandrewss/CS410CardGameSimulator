@@ -115,16 +115,42 @@ public class Server extends JFrame {
 	 * After every player has a hand, starts the gameplay.
 	 */
 	private void startGame() {
-		DatagramPacket packet;
 		Card card;
+		char trickSuit = ' ';
+		boolean trickOver = false;
+		boolean legalPlay = true;
 		
-		sendTurnToPlayer(players[currentTurn], currentTurn);
-		while(!ackPlayerAcceptTurn(players[currentTurn], currentTurn));
+		turnCycle = TurnCycle.FIRST_PLAY;
 		
-		while( (card = processCardPlay(players[currentTurn], currentTurn, waitForPacket() )) == null);
-		sendClearToPlayCard(players[currentTurn], card);
+		// play a trick
+		while(!trickOver) {
+			if(legalPlay) {
+				sendTurnToPlayer(players[currentTurn], currentTurn);
+				while(!ackPlayerAcceptTurn(players[currentTurn], currentTurn));
+			}
+			
+			while( (card = processCardPlay(players[currentTurn], currentTurn, waitForPacket() )) == null);
+				
+			if( (legalPlay = legalCardPlay(players[currentTurn], card, trickSuit)) ) {
+				sendClearToPlayCard(players[currentTurn], card);
+				
+				players[currentTurn].trickCard = card;
+				
+				if(turnCycle == TurnCycle.FIRST_PLAY) {
+					trickSuit = card.getSuit();
+				}
+				else if(turnCycle == TurnCycle.LAST_PLAY) {
+					trickOver = true;
+				}
+				
+				turnCycle = TurnCycle.values()[(turnCycle.ordinal() +1) %TurnCycle.values().length];
+				currentTurn = (currentTurn +1) %3;
+			}
+			else {
+				// send card reject packet
+			}
+		}
 		
-		// keep track of trick, pass the turn
 		
 		// proclaim winner of trick
 		// keep track of score
@@ -133,6 +159,35 @@ public class Server extends JFrame {
 		
 		// proclaim winner
 		// check to see if rematch is wanted.
+	}
+	
+	/*
+	 * Checks if the card was a valid play.
+	 *   Removes the card from the players hand
+	 * Parameter: The player that attempted to play a card,
+	 *   the card that needs to be validated
+	 *   the suit of the current trick
+	 */
+	private boolean legalCardPlay(PlayerStruct player, Card card, char trickSuit) {
+		boolean legal = false;
+		
+		if(player.hand.containsCard(card)) {
+			switch (turnCycle) {
+				case FIRST_PLAY:
+					player.trickCard = card;
+					legal = true;
+					break;
+				case SECOND_PLAY:
+				case LAST_PLAY:
+					if(card.getSuit() == trickSuit) {
+						player.trickCard = card;
+						legal = true;
+						break;
+					}
+					
+			}
+		}
+		return legal;
 	}
 	
 	/*
@@ -224,23 +279,22 @@ public class Server extends JFrame {
 		InetAddress address = packet.getAddress();
 		Card card = null;
 		
-		// validate that the card came from the correct player,
-		//  and that the player had that card in their hand
+		// validate that the card came from the correct player
 		if(address.equals(player.address)) {
 			char suit = message.charAt(0);
 			int number = Integer.parseInt(message.substring(1).trim());
 			
 			card = new Card(suit, number);
-			
-			if(!player.hand.removeCard(card)) {
-				card = null;
-			}
 		}
-		
 		
 		return card;
 	}
 	
+	/*
+	 * Tells a player that they're clear to play their card.
+	 *   Removes the card from that players hand on the server's side.
+	 * Parameters: The player to send to, and their card.
+	 */
 	private void sendClearToPlayCard(PlayerStruct player, Card card) {
 		byte[] buffer = String.format("%c%d", card.getSuit(), card.getNum()).getBytes();
 

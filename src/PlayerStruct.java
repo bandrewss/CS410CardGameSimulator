@@ -11,6 +11,7 @@ public class PlayerStruct {
 	public InetAddress address;
 	public int port;
 	public Hand hand;
+	public Card trickCard;
 	
 	public String name;
 
@@ -18,5 +19,6 @@ public class PlayerStruct {
 		address = a;
 		port = p;
 		hand = new Hand();
+		trickCard = null;
 	}
 }
