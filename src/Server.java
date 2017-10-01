@@ -95,10 +95,13 @@ public class Server extends JFrame {
 	 */
 	private boolean dealCards() {
 		int playerNumber;
+		Card card;
 		
 		for(int i = 0; i < 51; ++i) {
 			playerNumber = i % 3;
-			sendCardToPlayer(players[playerNumber], playerNumber, deck.pop());
+			card = deck.pop();
+			sendCardToPlayer(players[playerNumber], playerNumber, card);
+			players[i].hand.recieveCard(card.getSuit(), card.getNum());
 		}
 		
 		return false;
@@ -169,6 +172,9 @@ public class Server extends JFrame {
 			players[n] = new PlayerStruct(address, packet.getPort());
 			sendHelloToPlayer(players[n], n);
 		}
+		else {
+			sendRejectToPlayer(packet);
+		}
 		
 		return unique;
 	}
@@ -189,6 +195,24 @@ public class Server extends JFrame {
 			e.printStackTrace();
 		}
 	}
+	
+	/*
+	 * Let the connecting player know they can't play
+	 * Parameters: The packet the rejected player sent
+	 */
+	private void sendRejectToPlayer(DatagramPacket packet) {
+		byte[] buffer = String.format("You cannot play").getBytes();
+
+		DatagramPacket reject = new DatagramPacket(buffer, buffer.length, packet.getAddress(), packet.getPort());
+
+		try {
+			socket.send(reject);
+			appendToDisplay(String.format("Rejected Player"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}	
+	
 	
 	/*
 	 * Process a card play by player, return the card.

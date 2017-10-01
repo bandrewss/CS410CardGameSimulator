@@ -1,19 +1,22 @@
 // Ben Andrews
-// CS366 HW3
-// 6-22-17
+// Server for CS410 Card game
+// 9-27-17
 
-// struct-like objects are frowned upon in java,
-//  but I felt as though it was appropriate in this case.
+// server helper class, all public data to make a
+//  struct-like object
 
 import java.net.InetAddress;
 
 public class PlayerStruct {
-	public String name;
 	public InetAddress address;
 	public int port;
+	public Hand hand;
+	
+	public String name;
 
 	public PlayerStruct(InetAddress a, int p) {
 		address = a;
 		port = p;
+		hand = new Hand();
 	}
 }
