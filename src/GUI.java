@@ -1,7 +1,5 @@
 import javax.swing.*;
 
-
-
 public class GUI extends JFrame {
 	
 	private JTextArea display;
@@ -118,9 +116,6 @@ public class GUI extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);
 		setAlwaysOnTop(true);
-
-	
-
 	}
 	
 	public void setButtonN(int n, String s) {
