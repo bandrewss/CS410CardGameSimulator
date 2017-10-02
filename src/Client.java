@@ -43,10 +43,6 @@ public class Client extends JFrame implements Runnable {
 
 	private DatagramSocket socket;
 
-	private JTextArea display;
-	private JButton[] cardButtons = new JButton[17];
-	private JScrollPane jScrollPane1;
-
 	enum GameState {
 		GET_HELLO, GET_HAND, AWAIT_TURN, MY_TURN, AWAIT_TRICK_COMPLETION
 	}
@@ -55,11 +51,11 @@ public class Client extends JFrame implements Runnable {
 
 	private Hand hand;
 	private Card lastCardPlayed; // keeps track of the last played card for verification
+	
+	GUI gui;
 
 	/*
 	 * Sets up socket and builds simple GUI
-	 * 
-	 * XXX have client create real GUI
 	 */
 	public Client(String n, String myAddr, String serverAddr, int p) {
 		name = n;
@@ -74,133 +70,13 @@ public class Client extends JFrame implements Runnable {
 		} catch (UnknownHostException e) {
 			e.printStackTrace();
 		}
-		jScrollPane1 = new javax.swing.JScrollPane();
-		display = new javax.swing.JTextArea();
-		display.setEditable(false);
-
-		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-		jScrollPane1 = new JScrollPane();
-		display = new JTextArea();
-
-		for (int i = 0; i < cardButtons.length; ++i) {
-			cardButtons[i] = new JButton();
-			cardButtons[i].setText(String.format("%d", i));
-		}
-
-		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
-		display.setColumns(20);
-		display.setRows(5);
-		jScrollPane1.setViewportView(display);
-
-		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
-		getContentPane().setLayout(layout);
-		layout.setHorizontalGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-				.addGroup(layout.createSequentialGroup()
-						.addGroup(layout
-								.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGroup(layout
-										.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-										.addGroup(layout.createSequentialGroup().addGap(57, 57, 57).addComponent(
-												jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 277,
-												javax.swing.GroupLayout.PREFERRED_SIZE))
-										.addGroup(layout
-												.createSequentialGroup().addContainerGap().addComponent(cardButtons[0])
-												.addGap(18, 18, 18)
-												.addComponent(cardButtons[1])
-												.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-												.addComponent(cardButtons[2]))
-										.addGroup(layout.createSequentialGroup().addContainerGap().addGroup(layout
-												.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-												.addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout
-														.createSequentialGroup().addComponent(cardButtons[6])
-														.addPreferredGap(
-																javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-														.addComponent(cardButtons[7])
-														.addPreferredGap(
-																javax.swing.LayoutStyle.ComponentPlacement.RELATED,
-																javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-														.addComponent(cardButtons[8]))
-												.addGroup(javax.swing.GroupLayout.Alignment.LEADING,
-														layout.createSequentialGroup()
-																.addComponent(cardButtons[3])
-																.addPreferredGap(
-																		javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-																.addComponent(cardButtons[4]).addGap(18, 18, 18)
-																.addComponent(cardButtons[5]))))
-										.addGroup(javax.swing.GroupLayout.Alignment.TRAILING,
-												layout.createSequentialGroup().addContainerGap().addGroup(layout
-														.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-														.addGroup(layout.createSequentialGroup()
-																.addComponent(cardButtons[12])
-																.addPreferredGap(
-																		javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-																.addComponent(cardButtons[13])
-																.addPreferredGap(
-																		javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-																.addComponent(cardButtons[14]))
-														.addGroup(layout.createSequentialGroup()
-																.addComponent(cardButtons[9])
-																.addPreferredGap(
-																		javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-																.addComponent(cardButtons[10])
-																.addPreferredGap(
-																		javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-																.addComponent(cardButtons[11])))))
-								.addGroup(
-										layout.createSequentialGroup().addGap(62, 62, 62).addComponent(cardButtons[15])
-												.addGap(30, 30, 30).addComponent(cardButtons[16])))
-						.addContainerGap(66, Short.MAX_VALUE)));
-		layout.setVerticalGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING).addGroup(layout
-				.createSequentialGroup().addContainerGap()
-				.addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE,
-						javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-				.addGap(18, 18, 18)
-				.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-						.addComponent(cardButtons[0]).addComponent(cardButtons[1]).addComponent(cardButtons[2]))
-				.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-				.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-						.addComponent(cardButtons[3]).addComponent(cardButtons[4]).addComponent(cardButtons[5]))
-				.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-				.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-						.addComponent(cardButtons[6]).addComponent(cardButtons[7]).addComponent(cardButtons[8]))
-				.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-				.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-						.addComponent(cardButtons[9]).addComponent(cardButtons[10]).addComponent(cardButtons[11]))
-				.addGap(18, 18, 18)
-				.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-						.addComponent(cardButtons[12]).addComponent(cardButtons[13]).addComponent(cardButtons[14]))
-				.addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-				.addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-						.addComponent(cardButtons[15]).addComponent(cardButtons[16]))
-				.addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)));
-
-		pack();
-		setSize(400, 500);
-		setTitle(name);
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setVisible(true);
-		setAlwaysOnTop(true);
-
-		// Start GUI
-		/*
-		 * display = new JTextArea(); display.setEditable(false);
-		 * 
-		 * messageArea = new JTextField("Enter your message here");
-		 * messageArea.addActionListener(new ActionListener() { public void
-		 * actionPerformed(ActionEvent event) {
-		 * sendPacket(event.getActionCommand()); } });
-		 * 
-		 * add(messageArea, BorderLayout.SOUTH); add(new JScrollPane(display),
-		 * BorderLayout.CENTER); setSize(400, 300); setTitle(name);
-		 * setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); setVisible(true);
-		 * setAlwaysOnTop(true);
-		 */
-		// End GUI
+		
+		gui = new GUI(n);
 		
 		gameState = GameState.GET_HELLO;
 		hand = new Hand();
-	}// End Client Constructor
+	}
+	
 
 	/*
 	 * Starts the client game logic.
@@ -262,17 +138,18 @@ public class Client extends JFrame implements Runnable {
 		case GET_HAND:
 			// get suit and number from message
 			hand.recieveCard(message.charAt(6), Integer.parseInt(message.substring(7).trim()));
-			cardButtons[hand.getHandSize() - 1].setText(message);
+			gui.setButtonN(hand.getHandSize() -1, message);
+			//cardButtons[hand.getHandSize() - 1].setText(message);
 
 			if (hand.isFull()) {
-				appendToDisplay("Wait for your turn");
+				gui.appendToDisplay("Wait for your turn");
 				gameState = GameState.AWAIT_TURN;
 			}
 
 			break;
 		case AWAIT_TURN:
 			if (message.equals("Your turn")) {
-				appendToDisplay(message);
+				gui.appendToDisplay(message);
 				// ack turn
 				sendPacket("My turn");
 				// appendToDisplay(message);
@@ -285,32 +162,22 @@ public class Client extends JFrame implements Runnable {
 
 				sendPacket(lastCardPlayed.toString());
 				hand.removeCard(lastCardPlayed);
-				appendToDisplay("Wait for the trick to complete");
+				gui.appendToDisplay("Wait for the trick to complete");
 				gameState = GameState.AWAIT_TRICK_COMPLETION;
 			}
 			break;
 		case AWAIT_TRICK_COMPLETION:
-			appendToDisplay(message.substring(0, 17));
+			gui.appendToDisplay(message.substring(0, 17));
 			if (message.substring(0, 17).equals("The winner is player")) {
 				gameState = GameState.AWAIT_TURN;
-				appendToDisplay("matched");
+				gui.appendToDisplay("matched");
 			}
 			break;
 
 		}
 	}
 
-	/*
-	 * Adds given string to dummy gui
-	 */
-	private void appendToDisplay(String s) {
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				display.append(String.format("%s\n", s));
-			}
-		});
-	}
-
+	
 	// allows multiple clients be run from one class
 	public void run() {
 		go();
@@ -334,6 +201,18 @@ public class Client extends JFrame implements Runnable {
 	////////////////////////////////////////////////////////
 	// old methods kept around for reference, ignore them //
 	////////////////////////////////////////////////////////
+	
+	/*
+	 * Adds given string to dummy gui
+	 *
+	private void appendToDisplay(String s) {
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				display.append(String.format("%s\n", s));
+			}
+		});
+	}
+	*/
 
 	private void sendPacketTo(String message) {
 		byte[] data = message.getBytes();
