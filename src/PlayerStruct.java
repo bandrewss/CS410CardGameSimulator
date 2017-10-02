@@ -9,7 +9,7 @@ import java.net.InetAddress;
 import java.util.ArrayList;
 
 public class PlayerStruct {
-	public ArrayList<TrickStruct> tricks = new ArrayList<TrickStruct>();
+	public ArrayList<Trick> tricks = new ArrayList<Trick>();
 	public InetAddress address;
 	public int port;
 	public Hand hand;
