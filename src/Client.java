@@ -54,7 +54,7 @@ public class Client extends JFrame implements Runnable {
 	} private GameState gameState;
 	
 	private Hand hand;
-	private int lastCardPlayed; // keeps track of the last played card for verification
+	private Card lastCardPlayed; // keeps track of the last played card for verification
 	
 
 	/*
@@ -173,13 +173,18 @@ public class Client extends JFrame implements Runnable {
 				break;
 			case MY_TURN:
 				if(message.equals(hand.showCard(lastCardPlayed))) {
-					// play the card
+					 //play the card
 					sendPacket(hand.showCard(lastCardPlayed));
 					hand.playCard(lastCardPlayed);
 					gameState = GameState.AWAIT_TRICK_COMPLETION;
 				}
 				break;
 			case AWAIT_TRICK_COMPLETION:
+				appendToDisplay(message.substring(0, 17));
+				if(message.substring(0, 17).equals("The winner is player")) {
+					gameState = GameState.AWAIT_TURN;
+					appendToDisplay("matched");
+				}
 				break;
 				
 		}
@@ -221,6 +226,8 @@ public class Client extends JFrame implements Runnable {
 		byte[] data = message.getBytes();
 
 		DatagramPacket sender = new DatagramPacket(data, data.length, serverAddress, port);
+		
+		lastCardPlayed = new Card(message.charAt(0), Integer.parseInt(message.substring(1).trim()));
 
 		try {
 			socket.send(sender);

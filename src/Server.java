@@ -115,21 +115,37 @@ public class Server extends JFrame {
 	 * After every player has a hand, starts the gameplay.
 	 */
 	private void startGame() {
+		turnCycle = TurnCycle.FIRST_PLAY;
+		
+		for(int round = 0; round < 17; ++round) {
+			playATrick();
+			
+			// set the next turn to the winner of the trick
+			currentTurn = decideWinnerOfTrick();	
+		}
+			
+		
+		// proclaim winner
+		// check to see if rematch is wanted.
+	}
+	
+	/*
+	 * Plays one trick of the game
+	 */
+	private void playATrick() {
 		Card card;
 		char trickSuit = ' ';
+		DatagramPacket packet = null;
 		boolean trickOver = false;
 		boolean legalPlay = true;
 		
-		turnCycle = TurnCycle.FIRST_PLAY;
-		
-		// play a trick
 		while(!trickOver) {
 			if(legalPlay) {
 				sendTurnToPlayer(players[currentTurn], currentTurn);
 				while(!ackPlayerAcceptTurn(players[currentTurn], currentTurn));
 			}
 			
-			while( (card = processCardPlay(players[currentTurn], currentTurn, waitForPacket() )) == null);
+			while( (card = processCardPlay(players[currentTurn], currentTurn, (packet = waitForPacket()) )) == null);
 				
 			if( (legalPlay = legalCardPlay(players[currentTurn], card, trickSuit)) ) {
 				sendClearToPlayCard(players[currentTurn], card);
@@ -147,18 +163,11 @@ public class Server extends JFrame {
 				currentTurn = (currentTurn +1) %3;
 			}
 			else {
-				// send card reject packet
+				sendRejectTo(packet.getAddress(), packet.getPort());
 			}
 		}
 		
-		
-		// proclaim winner of trick
-		// keep track of score
-		// start next round
-		
-		
-		// proclaim winner
-		// check to see if rematch is wanted.
+		appendToDisplay(String.format("Trick done"));
 	}
 	
 	/*
@@ -174,20 +183,61 @@ public class Server extends JFrame {
 		if(player.hand.containsCard(card)) {
 			switch (turnCycle) {
 				case FIRST_PLAY:
-					player.trickCard = card;
 					legal = true;
+					player.canWin = true;
 					break;
 				case SECOND_PLAY:
 				case LAST_PLAY:
 					if(card.getSuit() == trickSuit) {
-						player.trickCard = card;
 						legal = true;
+						player.canWin = true;
 						break;
+					}
+					else {
+						if(!player.hand.containsSuit(trickSuit)) {
+							legal = true;
+							player.canWin = false;
+						}
 					}
 					
 			}
 		}
+		
+		if(legal) { 
+			player.trickCard = card;
+		}
+		
 		return legal;
+	}
+	
+	/*
+	 * 
+	 */
+	private int decideWinnerOfTrick() {
+		int winner = -1;
+		
+		if( players[PLAYER_0].trickCard.getNum() > players[PLAYER_1].trickCard.getNum() ) {
+			winner = players[PLAYER_0].canWin ? PLAYER_0 : PLAYER_1;
+		}
+		else {
+			winner = players[PLAYER_1].canWin ? PLAYER_1 : PLAYER_0;
+		}
+		
+		if( players[PLAYER_2].trickCard.getNum() > players[winner].trickCard.getNum() ) {
+			winner = players[PLAYER_2].canWin ? PLAYER_2 : winner;
+		}
+		else {
+			winner = players[winner].canWin ? winner : PLAYER_2;
+		}
+		
+		players[winner].tricks.add(new TrickStruct(players[PLAYER_0].trickCard, 
+												   players[PLAYER_1].trickCard, 
+												   players[PLAYER_2].trickCard));
+		
+		proclaimWinnerOfTrick(winner);
+		appendToDisplay(String.format("The winner is: %d\nPlayer%d has a score of: %d\n", winner, winner, players[winner].tricks.size()));
+	
+		return winner;
 	}
 	
 	/*
@@ -280,11 +330,16 @@ public class Server extends JFrame {
 		Card card = null;
 		
 		// validate that the card came from the correct player
-		if(address.equals(player.address)) {
-			char suit = message.charAt(0);
-			int number = Integer.parseInt(message.substring(1).trim());
-			
-			card = new Card(suit, number);
+		try {
+			if(address.equals(player.address)) {
+				char suit = message.charAt(0);
+				int number = Integer.parseInt(message.substring(1).trim());
+				
+				card = new Card(suit, number);
+			}
+		}
+		catch (NumberFormatException e) {
+			appendToDisplay("Processed illegal card");
 		}
 		
 		return card;
@@ -309,7 +364,24 @@ public class Server extends JFrame {
 			e.printStackTrace();
 		}
 	}
+	
+	/*
+	 * Tells a player the packet they just sent wasn't a valid card.
+	 * Parameter: The player, their number
+	 */
+	private void sendRejectTo(InetAddress address, int port) {
+		byte[] buffer = String.format("Not a valid play").getBytes();
 
+		DatagramPacket message = new DatagramPacket(buffer, buffer.length, address, port);
+
+		try {
+			socket.send(message);
+			appendToDisplay(String.format("Invalid play processed"));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
 	/*
 	 * Send a player a card.
 	 * Parameters: A player, their player number, and a card
@@ -361,6 +433,24 @@ public class Server extends JFrame {
 		}
 		
 		return correct;
+	}
+	
+	/*
+	 * 
+	 */
+	private void proclaimWinnerOfTrick(int n) {
+		byte[] buffer = String.format("The winner is player%d", n).getBytes();
+
+		
+		for(PlayerStruct player:players) {
+			DatagramPacket packet = new DatagramPacket(buffer, buffer.length, player.address, player.port);
+			
+			try {
+				socket.send(packet);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	/*
