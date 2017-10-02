@@ -230,7 +230,7 @@ public class Server extends JFrame {
 			winner = players[winner].canWin ? winner : PLAYER_2;
 		}
 		
-		players[winner].tricks.add(new TrickStruct(players[PLAYER_0].trickCard, 
+		players[winner].tricks.add(new Trick(players[PLAYER_0].trickCard, 
 												   players[PLAYER_1].trickCard, 
 												   players[PLAYER_2].trickCard));
 		
