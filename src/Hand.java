@@ -137,7 +137,9 @@ public class Hand {
 		return found;
 	}
 	
-	
+	public int getHandSize() {
+		return handSize;
+	}
 	
 
 }

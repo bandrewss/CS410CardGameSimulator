@@ -43,6 +43,8 @@ public class Client extends JFrame implements Runnable {
 	private DatagramSocket socket;
 
     private JTextArea display;
+    
+    /*
     private JButton jButton1;
     private JButton jButton10;
     private JButton jButton11;
@@ -60,9 +62,13 @@ public class Client extends JFrame implements Runnable {
     private JButton jButton7;
     private JButton jButton8;
     private JButton jButton9;
+    */
+    
+    private JButton[] cardButtons = new JButton[17];
+    
+    
     private JScrollPane jScrollPane1;
-    JButton [] cardButtons= {jButton1,jButton2,jButton3,jButton4,jButton5,jButton6,jButton7,jButton8,jButton9,
-            jButton10,jButton11,jButton12,jButton13,jButton14,jButton15,jButton16,jButton17};
+    
 	enum GameState {
 		GET_HELLO,
 		GET_HAND,
@@ -103,6 +109,8 @@ public class Client extends JFrame implements Runnable {
 
 	        jScrollPane1 = new JScrollPane();
 	        display = new JTextArea();
+	       
+	        /*
 	        jButton1 = new JButton();
 	        jButton2 = new JButton();
 	        jButton3 = new JButton();
@@ -120,6 +128,12 @@ public class Client extends JFrame implements Runnable {
 	        jButton15 = new JButton();
 	        jButton16 = new JButton();
 	        jButton17 = new JButton();
+	        */
+	        
+	        for(int i = 0; i < cardButtons.length; ++i) {
+	        	cardButtons[i] = new JButton();
+	        	cardButtons[i].setText(String.format("%d", i));
+	        }
 
 	        
 	        setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -128,39 +142,25 @@ public class Client extends JFrame implements Runnable {
 	        display.setRows(5);
 	        jScrollPane1.setViewportView(display);
 
+	        /*
 	        jButton1.setText("jButton1");
-	        
 	        jButton2.setText("jButton2");
-	        
 	        jButton3.setText("jButton3");
-
 	        jButton4.setText("jButton4");
-
 	        jButton5.setText("jButton5");
-
 	        jButton6.setText("jButton6");
-
 	        jButton7.setText("jButton7");
-
 	        jButton8.setText("jButton8");
-
 	        jButton9.setText("jButton9");
-
 	        jButton10.setText("jButton10");
-
 	        jButton11.setText("jButton11");
-
 	        jButton12.setText("jButton12");
-
 	        jButton13.setText("jButton13");
-
 	        jButton14.setText("jButton14");
-
 	        jButton15.setText("jButton15");
-
 	        jButton16.setText("jButton16");
-
 	        jButton17.setText("jButton17");
+	        */
 
 	        javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
 	        getContentPane().setLayout(layout);
@@ -174,46 +174,46 @@ public class Client extends JFrame implements Runnable {
 	                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 277, javax.swing.GroupLayout.PREFERRED_SIZE))
 	                        .addGroup(layout.createSequentialGroup()
 	                            .addContainerGap()
-	                            .addComponent(jButton1)
+	                            .addComponent(cardButtons[0])
 	                            .addGap(18, 18, 18)
-	                            .addComponent(jButton2)
+	                            .addComponent(cardButtons[1])
 	                            .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-	                            .addComponent(jButton3))
+	                            .addComponent(cardButtons[2]))
 	                        .addGroup(layout.createSequentialGroup()
 	                            .addContainerGap()
 	                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
 	                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-	                                    .addComponent(jButton7)
+	                                    .addComponent(cardButtons[6])
 	                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-	                                    .addComponent(jButton8)
+	                                    .addComponent(cardButtons[7])
 	                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-	                                    .addComponent(jButton9))
+	                                    .addComponent(cardButtons[8]))
 	                                .addGroup(javax.swing.GroupLayout.Alignment.LEADING, layout.createSequentialGroup()
-	                                    .addComponent(jButton4)
+	                                    .addComponent(cardButtons[3])
 	                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-	                                    .addComponent(jButton5)
+	                                    .addComponent(cardButtons[4])
 	                                    .addGap(18, 18, 18)
-	                                    .addComponent(jButton6))))
+	                                    .addComponent(cardButtons[5]))))
 	                        .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
 	                            .addContainerGap()
 	                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
 	                                .addGroup(layout.createSequentialGroup()
-	                                    .addComponent(jButton13)
+	                                    .addComponent(cardButtons[12])
 	                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-	                                    .addComponent(jButton14)
+	                                    .addComponent(cardButtons[13])
 	                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-	                                    .addComponent(jButton15))
+	                                    .addComponent(cardButtons[14]))
 	                                .addGroup(layout.createSequentialGroup()
-	                                    .addComponent(jButton10)
+	                                    .addComponent(cardButtons[9])
 	                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-	                                    .addComponent(jButton11)
+	                                    .addComponent(cardButtons[10])
 	                                    .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-	                                    .addComponent(jButton12)))))
+	                                    .addComponent(cardButtons[11])))))
 	                    .addGroup(layout.createSequentialGroup()
 	                        .addGap(62, 62, 62)
-	                        .addComponent(jButton16)
+	                        .addComponent(cardButtons[15])
 	                        .addGap(30, 30, 30)
-	                        .addComponent(jButton17)))
+	                        .addComponent(cardButtons[16])))
 	                .addContainerGap(66, Short.MAX_VALUE))
 	        );
 	        layout.setVerticalGroup(
@@ -223,33 +223,33 @@ public class Client extends JFrame implements Runnable {
 	                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
 	                .addGap(18, 18, 18)
 	                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-	                    .addComponent(jButton1)
-	                    .addComponent(jButton2)
-	                    .addComponent(jButton3))
+	                    .addComponent(cardButtons[0])
+	                    .addComponent(cardButtons[1])
+	                    .addComponent(cardButtons[2]))
 	                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
 	                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-	                    .addComponent(jButton4)
-	                    .addComponent(jButton5)
-	                    .addComponent(jButton6))
+	                    .addComponent(cardButtons[3])
+	                    .addComponent(cardButtons[4])
+	                    .addComponent(cardButtons[5]))
 	                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
 	                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-	                    .addComponent(jButton7)
-	                    .addComponent(jButton8)
-	                    .addComponent(jButton9))
+	                    .addComponent(cardButtons[6])
+	                    .addComponent(cardButtons[7])
+	                    .addComponent(cardButtons[8]))
 	                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
 	                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-	                    .addComponent(jButton10)
-	                    .addComponent(jButton11)
-	                    .addComponent(jButton12))
+	                    .addComponent(cardButtons[9])
+	                    .addComponent(cardButtons[10])
+	                    .addComponent(cardButtons[11]))
 	                .addGap(18, 18, 18)
 	                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-	                    .addComponent(jButton13)
-	                    .addComponent(jButton14)
-	                    .addComponent(jButton15))
+	                    .addComponent(cardButtons[12])
+	                    .addComponent(cardButtons[13])
+	                    .addComponent(cardButtons[14]))
 	                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
 	                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-	                    .addComponent(jButton16)
-	                    .addComponent(jButton17))
+	                    .addComponent(cardButtons[15])
+	                    .addComponent(cardButtons[16]))
 	                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
 	        );
 
@@ -345,11 +345,16 @@ public class Client extends JFrame implements Runnable {
 				gameState = GameState.GET_HAND;
 				break;
 			case GET_HAND:
-				// get suit and number from message
-				// hand.recieveCard(message.charAt(6), Integer.parseInt(message.substring(7).trim()));
+				//get suit and number from message
+				hand.recieveCard(message.charAt(6), Integer.parseInt(message.substring(7).trim()));
+				cardButtons[hand.getHandSize() -1].setText(message);
+				
+				
 				//set button text here
 				//hand.recieveCard(message.charAt(6), Integer.parseInt(message.substring(7).trim()));
 				//cardButtons[0].setText(message);
+				
+				/*
 				if(count==1)
 				{
 				hand.recieveCard(message.charAt(6), Integer.parseInt(message.substring(7).trim()));
@@ -455,16 +460,13 @@ public class Client extends JFrame implements Runnable {
 			 
 			 break;
 				}
+				*/
 				
-				
-				//if(hand.isFull()) {
-				else {
+				if(hand.isFull()) {
 					gameState = GameState.AWAIT_TURN;
-					count++;
-					break;
 				}
 				
-				//break;
+				break;
 			case AWAIT_TURN:
 				
 				if(message.equals("Your turn")) {
