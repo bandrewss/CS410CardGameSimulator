@@ -44,9 +44,17 @@ public class Hand {
 	 *
 	 * 
 	 */
-	public String playCard(Card card) {
-		removeCard(card);
-		return  showCard(card);		
+	public Card playCard(int i) {
+		if(handArray[i]==null||i>handArray.length) {
+			System.out.println("no card avalible");
+			return null;
+		}
+		else {
+		handArray[i]=  play;
+		handArray[i]= null;
+		return play;
+		}
+		
 	}//End playCard
 	
 	/*
@@ -69,6 +77,8 @@ public class Hand {
 	}
 	
 	public void showHand() {
+		System.out.println("am here");
+		
 		for(int i =0; i<= handArray.length-1;i++) {
 			if(handArray[i]==null) {
 				
@@ -80,18 +90,10 @@ public class Hand {
 		}
 	}
 	
-	public String showCard(Card card) {
-		boolean found = false;
-		
-		for(Card c:handArray) {
-			if( c.toString().equals(card.toString())) {
-				found = true;
-				break;
-			}
-			
-		}
-		
-		return found ? card.toString() : null;
+	public String showCard(int postion) {
+		String singleCard=handArray[postion].toString();
+		//System.out.println(singleCard);
+		return singleCard;
 	}
 	
 	/*
@@ -100,18 +102,6 @@ public class Hand {
 	public boolean isFull() {
 		return !(handSize < MAX_HAND_SIZE);
 		
-	}
-	
-	public boolean containsSuit(char suit) {
-		boolean foundSuit = false;
-		
-		for(Card card:handArray) {
-			if( (foundSuit = card.getSuit() == suit) ) {
-				break;
-			}
-		}
-		
-		return foundSuit;
 	}
 	
 	/*
@@ -130,4 +120,24 @@ public class Hand {
 		
 		return found;
 	}
+	
+	/*
+	 * Returns true if a card with the given suit exists in the hand.
+	 */
+	public boolean containsSuit(char suit) {
+		boolean found = false;
+		
+		for(Card card:handArray) {
+			if(card.getSuit() == suit) {
+				found = true;
+				break;
+			}
+		}
+		
+		return found;
+	}
+	
+	
+	
+
 }
