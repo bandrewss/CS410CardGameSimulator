@@ -124,7 +124,8 @@ public class Client implements Runnable {
 		case GET_HAND:
 			// get suit and number from message
 			hand.recieveCard(message.charAt(6), Integer.parseInt(message.substring(7).trim()));
-			gui.setButtonN(hand.getHandSize() -1, message);
+			String cardName=message.substring(5);
+			gui.setButtonN(hand.getHandSize() -1, cardName);
 
 			if (hand.isFull()) {
 				gui.appendToDisplay("Wait for your turn");
@@ -141,11 +142,17 @@ public class Client implements Runnable {
 			}
 			break;
 		case MY_TURN:
+			if(gui.jButtonActionPerformed(null)) {
+				sendPacket(lastCardPlayed.toString());
+				hand.playCard(hand.findCardIndex(lastCardPlayed));
+				hand.removeCard(lastCardPlayed);
+				gui.appendToDisplay("Played Card");
+				}
 			if (message.equals(lastCardPlayed.toString())) {
 				// play the card
-				sendPacket(lastCardPlayed.toString());
-				hand.removeCard(lastCardPlayed);
+				
 				gui.appendToDisplay("Wait for the trick to complete");
+
 				gameState = GameState.AWAIT_TRICK_COMPLETION;
 			}
 			break;

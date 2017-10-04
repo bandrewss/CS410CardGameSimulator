@@ -20,7 +20,16 @@ public class GUI extends JFrame {
 
 		for (int i = 0; i < cardButtons.length; ++i) {
 			cardButtons[i] = new JButton();
-			cardButtons[i].setText(String.format("%d", i));
+			String cardName =String.format("%d", i);
+			cardButtons[i].setText(cardName);
+		}
+		for (int i = 0; i < cardButtons.length; ++i) {
+			 
+			cardButtons[i].addActionListener(new java.awt.event.ActionListener() {
+	            public void actionPerformed(java.awt.event.ActionEvent evt) {
+	            	jButtonActionPerformed(evt);
+	            }
+	        });
 		}
 
 		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
@@ -125,7 +134,35 @@ public class GUI extends JFrame {
 			}
 		});
 	}
+	/*
+	public void createListener(int i) {
+		cardButtons[i].addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+            	jButtonActionPerformed(evt, i);
+            }
+        });
+	}
+	*/
+	public boolean jButtonActionPerformed(java.awt.event.ActionEvent evt) {
+		return true;   
+    	//hand.playCard(i);
+    	//cardButtons[i].setVisible(false);
+    }  
 	
+	/*public void createEvent(int n) {
+		SwingUtilities.invokeLater(new Runnable() {
+			public void run() {
+				JButton singleButton=cardButtons[n];
+				singleButton.addActionListener(new java.awt.event.ActionListener() {
+		            public void actionPerformed(java.awt.event.ActionEvent evt) {
+		            	singleButton(evt);
+		            }
+		        });
+			}
+		});
+	}
+
+	*/
 	/*
 	 * Adds given string to dummy gui
 	 */
@@ -136,6 +173,8 @@ public class GUI extends JFrame {
 			}
 		});
 	}
+
+
 
 	public static void main(String[] args) {
 		GUI gui = new GUI("test");

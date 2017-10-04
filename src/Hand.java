@@ -96,6 +96,17 @@ public class Hand {
 		return singleCard;
 	}
 	
+	public int findCardIndex(Card mycard) {
+		int index=(Integer) null;
+		for(int i=0;i<handArray.length-1;i++) {
+			if(handArray[i].equals(mycard)) {
+				index=i;
+			}
+		}
+		
+		return index;
+	}
+	
 	/*
 	 * Returns true if the players hand is full
 	 */
