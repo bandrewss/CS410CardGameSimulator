@@ -156,8 +156,12 @@ public class Client implements Runnable {
 			if (message.equals(lastCardPlayed.toString())) {
 				// play the card
 				hand.removeCard(new Card(message.charAt(0), Integer.parseInt(message.substring(1))));
+				gui.removeCardButton(message);
 				gui.appendToDisplay("Wait for the trick to complete");
 				gameState = GameState.AWAIT_TRICK_COMPLETION;
+			}
+			else {
+				gui.appendToDisplay(message);
 			}
 			break;
 		case AWAIT_TRICK_COMPLETION:

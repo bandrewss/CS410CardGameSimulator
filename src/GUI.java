@@ -139,6 +139,16 @@ public class GUI extends JFrame {
 			}
 		});
 	}
+	
+	public void removeCardButton(String card) {
+		for(int i = 0; i < cardButtons.length; ++i) {
+			if(cardButtons[i].getText().equals(card)) { 
+				cardButtons[i].setVisible(false);
+				break;
+			}
+		}
+			
+	}
 	/*
 	public void createListener(int i) {
 		cardButtons[i].addActionListener(new java.awt.event.ActionListener() {
@@ -153,11 +163,7 @@ public class GUI extends JFrame {
 		appendToDisplay(message);
 		
 		client.playCard(message);
-		if(client.myTurn()) 
-		if(client.getHand().containsCard(new Card(message.charAt(0),Integer.parseInt(message.substring(1))))) {
-		JButton clickedButton =(JButton) evt.getSource();
-		clickedButton.setVisible(false);
-		}
+		
 		return true;   
     	//hand.playCard(i);
     	//cardButtons[i].setVisible(false);

@@ -490,7 +490,7 @@ public class Server extends JFrame {
 	}
 	
 	/*
-	 * 
+	 * Hi -Jimmy
 	 */
 	private void proclaimWinnerOfTrick(int n) {
 		byte[] buffer = String.format("The winner is player%d", n).getBytes();
