@@ -66,7 +66,7 @@ public class Hand {
 		boolean containedCard = false;
 		
 		for(int i = 0; i < handArray.length; ++i) {
-			if(card.toString().equals(handArray[i].toString())) {
+			if(handArray[i] != null && card.toString().equals(handArray[i].toString())) {
 				containedCard = true;
 				handArray[i] = null;
 				break;
@@ -123,7 +123,7 @@ public class Hand {
 		boolean found = false;
 		
 		for(Card testCard:handArray) {
-			if(checkCard.toString().equals(testCard.toString())) {
+		if(testCard != null && checkCard.toString().equals(testCard.toString())) {
 				found = true;
 				break;
 			}
