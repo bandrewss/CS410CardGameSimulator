@@ -172,6 +172,14 @@ public class Client implements Runnable {
 		}
 	}
 
+	public Hand getHand() {
+		return this.hand;
+		
+	}
+	
+	public boolean myTurn() {
+		return gameState == GameState.MY_TURN; 
+	}
 	
 	// allows multiple clients be run from one class
 	public void run() {

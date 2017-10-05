@@ -153,7 +153,11 @@ public class GUI extends JFrame {
 		appendToDisplay(message);
 		
 		client.playCard(message);
-		
+		if(client.myTurn()) 
+		if(client.getHand().containsCard(new Card(message.charAt(0),Integer.parseInt(message.substring(1))))) {
+		JButton clickedButton =(JButton) evt.getSource();
+		clickedButton.setVisible(false);
+		}
 		return true;   
     	//hand.playCard(i);
     	//cardButtons[i].setVisible(false);
