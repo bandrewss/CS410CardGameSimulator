@@ -65,10 +65,10 @@ public class Hand {
 	public boolean removeCard(Card card) {
 		boolean containedCard = false;
 		
-		for(Card testCard:handArray) {
-			if(card.toString().equals(testCard.toString())) {
+		for(int i = 0; i < handArray.length; ++i) {
+			if(card.toString().equals(handArray[i].toString())) {
 				containedCard = true;
-				testCard = null;
+				handArray[i] = null;
 				break;
 			}
 		}

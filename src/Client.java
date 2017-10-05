@@ -90,7 +90,6 @@ public class Client implements Runnable {
 	public void playCard(String s) {
 		Card c = new Card(s.charAt(0), Integer.parseInt(s.substring(1).trim()));
 		lastCardPlayed = c; 
-		hand.removeCard(c);
 		
 		sendPacket(s);
 	}
@@ -156,6 +155,7 @@ public class Client implements Runnable {
 		case MY_TURN:
 			if (message.equals(lastCardPlayed.toString())) {
 				// play the card
+				hand.removeCard(new Card(message.charAt(0), Integer.parseInt(message.substring(1))));
 				gui.appendToDisplay("Wait for the trick to complete");
 				gameState = GameState.AWAIT_TRICK_COMPLETION;
 			}
