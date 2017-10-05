@@ -117,7 +117,7 @@ public class Server extends JFrame {
 	private void startGame() {
 		turnCycle = TurnCycle.FIRST_PLAY;
 		
-		for(int round = 0; round < 17; ++round) {
+		for(int round = 0; round < 2; ++round) {
 			playATrick();
 			
 			// set the next turn to the winner of the trick
@@ -125,7 +125,8 @@ public class Server extends JFrame {
 		}
 			
 		
-		// proclaim winner
+		proclaimWinnerOfGame(decideWinnerOfGame());
+		
 		// check to see if rematch is wanted.
 	}
 	
@@ -238,6 +239,59 @@ public class Server extends JFrame {
 		appendToDisplay(String.format("The winner is: %d\nPlayer%d has a score of: %d\n", winner, winner, players[winner].tricks.size()));
 	
 		return winner;
+	}
+	
+	private int decideWinnerOfGame() {
+		int winner = PLAYER_0;
+		boolean foundWinner = true;
+		int tiePlayerA = -1;
+		int tiePlayerB = -1;
+		
+		if(players[PLAYER_1].tricks.size() > players[winner].tricks.size()) {
+			winner = PLAYER_1;
+			foundWinner = true;
+		}
+		else if(players[PLAYER_1].tricks.size() == players[winner].tricks.size()) {
+			foundWinner = false;
+			tiePlayerA = winner;
+			tiePlayerB = PLAYER_1;
+		}
+		
+		if(players[PLAYER_2].tricks.size() == players[winner].tricks.size()) {
+			tiePlayerA = winner;
+			tiePlayerB = PLAYER_2;
+			foundWinner = false;
+		} else if (players[PLAYER_2].tricks.size() > players[winner].tricks.size()) {
+			winner = PLAYER_2;
+			foundWinner =  true;
+		}
+		
+		if(!foundWinner) {
+			winner = settleTie(tiePlayerA, tiePlayerB); 
+				
+		}
+		
+		return winner;
+	}
+	
+	private int settleTie(int playerA, int playerB) {
+		int playerScoreA = 0;
+		int playerScoreB = 0;
+		
+		for(Trick trick:players[playerA].tricks) {	
+			playerScoreA += trick.a.getNum();
+			playerScoreA += trick.b.getNum();
+			playerScoreA += trick.c.getNum();
+		}
+		
+		for(Trick trick:players[playerB].tricks) {	
+			playerScoreB += trick.a.getNum();
+			playerScoreB += trick.b.getNum();
+			playerScoreB += trick.c.getNum();
+		}
+		
+		
+		return playerScoreA > playerScoreB ? playerA : playerB;
 	}
 	
 	/*
@@ -440,6 +494,21 @@ public class Server extends JFrame {
 	 */
 	private void proclaimWinnerOfTrick(int n) {
 		byte[] buffer = String.format("The winner is player%d", n).getBytes();
+
+		
+		for(PlayerStruct player:players) {
+			DatagramPacket packet = new DatagramPacket(buffer, buffer.length, player.address, player.port);
+			
+			try {
+				socket.send(packet);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	private void proclaimWinnerOfGame(int n) {
+		byte[] buffer = String.format("Player%d won the game", n).getBytes();
 
 		
 		for(PlayerStruct player:players) {

@@ -6,9 +6,14 @@ public class GUI extends JFrame {
 	private JButton[] cardButtons = new JButton[17];
 	private JScrollPane jScrollPane1;
 	
+	Client client;
 	
 	
-	public GUI(String name) {
+	
+	public GUI(String name, Client c) {
+		client = c;
+		
+		
 		jScrollPane1 = new javax.swing.JScrollPane();
 		display = new javax.swing.JTextArea();
 		display.setEditable(false);
@@ -144,6 +149,11 @@ public class GUI extends JFrame {
 	}
 	*/
 	public boolean jButtonActionPerformed(java.awt.event.ActionEvent evt) {
+		String message = evt.getActionCommand();
+		appendToDisplay(message);
+		
+		client.playCard(message);
+		
 		return true;   
     	//hand.playCard(i);
     	//cardButtons[i].setVisible(false);
@@ -173,11 +183,4 @@ public class GUI extends JFrame {
 			}
 		});
 	}
-
-
-
-	public static void main(String[] args) {
-		GUI gui = new GUI("test");
-	}
-
 }

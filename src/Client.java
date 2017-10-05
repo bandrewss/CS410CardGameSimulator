@@ -28,7 +28,7 @@ public class Client implements Runnable {
 	private DatagramSocket socket;
 
 	enum GameState {
-		GET_HELLO, GET_HAND, AWAIT_TURN, MY_TURN, AWAIT_TRICK_COMPLETION
+		GET_HELLO, GET_HAND, AWAIT_TURN, MY_TURN, AWAIT_TRICK_COMPLETION, GAME_ENDED
 	}
 
 	private GameState gameState;
@@ -55,7 +55,7 @@ public class Client implements Runnable {
 			e.printStackTrace();
 		}
 		
-		gui = new GUI(n);
+		gui = new GUI(n, this);
 		
 		gameState = GameState.GET_HELLO;
 		hand = new Hand();
@@ -79,12 +79,20 @@ public class Client implements Runnable {
 		byte[] message = s.getBytes();
 
 		DatagramPacket packet = new DatagramPacket(message, message.length, serverAddress, port);
-
+		
 		try {
 			socket.send(packet);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public void playCard(String s) {
+		Card c = new Card(s.charAt(0), Integer.parseInt(s.substring(1).trim()));
+		lastCardPlayed = c; 
+		hand.removeCard(c);
+		
+		sendPacket(s);
 	}
 
 	/*
@@ -124,7 +132,7 @@ public class Client implements Runnable {
 		case GET_HAND:
 			// get suit and number from message
 			hand.recieveCard(message.charAt(6), Integer.parseInt(message.substring(7).trim()));
-			String cardName=message.substring(5);
+			String cardName=message.substring(6);
 			gui.setButtonN(hand.getHandSize() -1, cardName);
 
 			if (hand.isFull()) {
@@ -140,30 +148,27 @@ public class Client implements Runnable {
 				sendPacket("My turn");
 				gameState = GameState.MY_TURN;
 			}
+			else if(message.substring(8).equals("won the game")) {
+				gui.appendToDisplay(message);
+				gameState = GameState.GAME_ENDED;
+			}
 			break;
 		case MY_TURN:
-			if(gui.jButtonActionPerformed(null)) {
-				sendPacket(lastCardPlayed.toString());
-				hand.playCard(hand.findCardIndex(lastCardPlayed));
-				hand.removeCard(lastCardPlayed);
-				gui.appendToDisplay("Played Card");
-				}
 			if (message.equals(lastCardPlayed.toString())) {
 				// play the card
-				
 				gui.appendToDisplay("Wait for the trick to complete");
-
 				gameState = GameState.AWAIT_TRICK_COMPLETION;
 			}
 			break;
 		case AWAIT_TRICK_COMPLETION:
-			gui.appendToDisplay(message.substring(0, 17));
-			if (message.substring(0, 17).equals("The winner is player")) {
+			if (message.length() >= 20 && message.substring(0, 20).equals("The winner is player")) {
+				gui.appendToDisplay(message);
 				gameState = GameState.AWAIT_TURN;
-				gui.appendToDisplay("matched");
 			}
+			
 			break;
-
+		case GAME_ENDED:
+			break;
 		}
 	}
 
@@ -208,8 +213,6 @@ public class Client implements Runnable {
 		byte[] data = message.getBytes();
 
 		DatagramPacket sender = new DatagramPacket(data, data.length, serverAddress, port);
-
-		lastCardPlayed = new Card(message.charAt(0), Integer.parseInt(message.substring(1).trim()));
 
 		try {
 			socket.send(sender);
