@@ -127,6 +127,8 @@ public class Client implements Runnable {
 		// getting first reply from the server
 		case GET_HELLO:
 			if (message.substring(0, 22).equals("Hello, you are player:")) {
+				gui.appendToDisplay(message);
+				gui.appendToDisplay("Please wait while other players connect...\n");
 				gameState = GameState.GET_HAND;
 			}
 			break;

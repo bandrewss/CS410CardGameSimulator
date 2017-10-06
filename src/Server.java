@@ -58,6 +58,8 @@ public class Server extends JFrame {
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);
 		setAlwaysOnTop(true);
+		
+		appendToDisplay(String.format("Server IP: %s", addr));
 	}
 	
 	/*
