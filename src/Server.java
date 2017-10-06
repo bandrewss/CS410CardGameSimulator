@@ -348,7 +348,7 @@ public class Server extends JFrame {
 	 * Parameters: A player, and their player number
 	 */
 	private void sendHelloToPlayer(PlayerStruct player, int n) {
-		byte[] buffer = String.format("Hello, you are player: %1d", n).getBytes();
+		byte[] buffer = String.format("Hello, you are Player: %1d", n).getBytes();
 
 		DatagramPacket greeter = new DatagramPacket(buffer, buffer.length, player.address, player.port);
 
