@@ -42,7 +42,6 @@ public class Card {
 			rankFactor = 13;
 		}
 		
-		System.out.println(rankFactor + number);
 		return number + rankFactor;
 	}
 	
