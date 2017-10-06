@@ -532,7 +532,12 @@ public class Server extends JFrame {
 	}
 	
 	private void proclaimWinnerOfGame(int n) {
-		byte[] buffer = String.format("Player%d won the game", n).getBytes();
+		String finalScores = String.format("Player0: %d\nPlayer1: %d\nPlayer2: %d",
+								players[PLAYER_0].tricks.size(),
+								players[PLAYER_1].tricks.size(),
+								players[PLAYER_2].tricks.size());
+		
+		byte[] buffer = String.format("Player%d won the game\nFinal Scores:\n%s", n, finalScores).getBytes();
 
 		
 		for(PlayerStruct player:players) {
@@ -544,6 +549,8 @@ public class Server extends JFrame {
 				e.printStackTrace();
 			}
 		}
+		
+		appendToDisplay(String.format("Game Over. Player%d won.\nFinalScores:\n%s", n, finalScores));
 	}
 	
 	/*
