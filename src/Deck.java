@@ -44,6 +44,10 @@ public class Deck {
     	}//End Reshuffle loop 
     }//End shuffle
     
+    /*
+     * Pops the top card of the deck.
+     * Returns: the top card of the deck.
+     */
     public Card pop() {
     	int cardIndex = cardCount -1;
     	Card returnCard = null;

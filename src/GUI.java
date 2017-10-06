@@ -40,7 +40,7 @@ public class GUI extends JFrame {
 		setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
 		display.setColumns(20);
-		display.setRows(5);
+		display.setRows(8);
 		jScrollPane1.setViewportView(display);
 
 		javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -132,6 +132,10 @@ public class GUI extends JFrame {
 		setAlwaysOnTop(true);
 	}
 	
+	/*
+	 * Sets label of button of index n to string s.
+	 * Parameters: int index, string label
+	 */
 	private void setButton(int n, String s) {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
@@ -140,12 +144,20 @@ public class GUI extends JFrame {
 		});
 	}
 	
+	/*
+	 * Sets all the button labels to the cards in the given hand.
+	 * Parameters: a hand full of cards.
+	 */
 	public void setButtons(Hand hand) {
 		for(int i = 0; i < hand.getHandSize(); ++i) {
 			setButton(i, hand.getCardByIndex(i).toString());
 		}
 	}
 	
+	/*
+	 * Removes the button whos label matches the given String.
+	 * Parameter: a string representation of a card.
+	 */
 	public void removeCardButton(String card) {
 		for(int i = 0; i < cardButtons.length; ++i) {
 			if(cardButtons[i].getText().equals(card)) { 
@@ -166,7 +178,8 @@ public class GUI extends JFrame {
 		
 
 	/*
-	 * Adds given string to dummy gui
+	 * Adds given string to console window.
+	 * Parameter: the string to add.
 	 */
 	public void appendToDisplay(String s) {
 		SwingUtilities.invokeLater(new Runnable() {

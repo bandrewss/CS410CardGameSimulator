@@ -21,6 +21,7 @@ public class Hand {
 		}
 		
 	}
+	
 	/*
 	 * getCard Method
 	 * Returns null
@@ -39,6 +40,7 @@ public class Hand {
 	
 	/*
 	 * Bubble sort hand.
+	 *  -could instead sort cards as they come in
 	 */
 	public void sortHand() {
 		Card temp;

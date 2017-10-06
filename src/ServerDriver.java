@@ -9,7 +9,6 @@ public class ServerDriver
 		//Server server = new Server(12321, "10.19.82.22");
 		
 		server.go();
-
 	}
 
 }

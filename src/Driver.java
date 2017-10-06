@@ -36,7 +36,7 @@ public class Driver {
 	}
 
 	private static void startPlayer() {
-		player = new Client("temp", playerIP, serverIP, 12321);
+		player = new Client("", playerIP, serverIP, 12321);
 		
 		startWindow.dispose();
 		//startWindow.setVisible(false);

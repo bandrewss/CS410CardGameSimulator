@@ -87,6 +87,10 @@ public class Client implements Runnable {
 		}
 	}
 	
+	/*
+	 * Plays a card that matches the given string.
+	 * Parameters: a string representation of a card.
+	 */
 	public void playCard(String s) {
 		Card c = new Card(s);
 		lastCardPlayed = c; 
@@ -126,18 +130,18 @@ public class Client implements Runnable {
 		switch (gameState) {
 		// getting first reply from the server
 		case GET_HELLO:
+			// if the packet is a hello reply from the server
 			if (message.substring(0, 22).equals("Hello, you are Player:")) {
 				gui.appendToDisplay(message);
-				gui.appendToDisplay("Please wait while other players connect...\n");
+				gui.appendToDisplay("Please wait while other players connect\n");
 				gui.setTitle(message.substring(15));
 				gameState = GameState.GET_HAND;
 			}
 			break;
 		// getting players hand from the server, one card at a time
 		case GET_HAND:
-			// get suit and number from message
+			// get suit and number from message, put it in the hand
 			hand.recieveCard(message.charAt(6), Integer.parseInt(message.substring(7).trim()));
-			String cardName=message.substring(6);
 
 			if (hand.isFull()) {
 				hand.sortHand();
@@ -176,12 +180,14 @@ public class Client implements Runnable {
 				gui.appendToDisplay("Wait for the trick to complete");
 				gameState = GameState.AWAIT_TRICK_COMPLETION;
 			}
+			// most likely an error message, display it
 			else {
 				gui.appendToDisplay(message);
 			}
 			break;
 		// wait for the other players to complete their trick
 		case AWAIT_TRICK_COMPLETION:
+			// if the message is declaring a winner
 			if (message.length() >= 20 && message.substring(0, 20).equals("The winner is player")) {
 				gui.appendToDisplay("Trick ended,");
 				gui.appendToDisplay(String.format("%s\n", message));
@@ -199,48 +205,5 @@ public class Client implements Runnable {
 	// allows multiple clients be run from one class
 	public void run() {
 		go();
-	}
-
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	////////////////////////////////////////////////////////
-	// old methods kept around for reference, ignore them //
-	////////////////////////////////////////////////////////
-	
-	/*
-	 * Adds given string to dummy gui
-	 *
-	private void appendToDisplay(String s) {
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				display.append(String.format("%s\n", s));
-			}
-		});
-	}
-	*/
-
-	private void sendPacketTo(String message) {
-		byte[] data = message.getBytes();
-
-		DatagramPacket sender = new DatagramPacket(data, data.length, serverAddress, port);
-
-		try {
-			socket.send(sender);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 }
