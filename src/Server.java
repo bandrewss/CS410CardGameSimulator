@@ -150,6 +150,7 @@ public class Server extends JFrame {
 				
 			if( (legalPlay = legalCardPlay(players[currentTurn], card, trickSuit)) ) {
 				sendClearToPlayCard(players[currentTurn], card);
+				proclaimCardPlay(card);
 				
 				players[currentTurn].trickCard = card;
 				
@@ -414,6 +415,29 @@ public class Server extends JFrame {
 		try {
 			socket.send(message);
 			appendToDisplay(String.format("Player%d played %c%d", currentTurn, card.getSuit(), card.getNum()));
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	/*
+	 * Tells players who did not just play card what card was played and who played it.
+	 */
+	private void proclaimCardPlay(Card c) {
+		byte[] buffer = String.format("Player%d played: %s", currentTurn, c.toString()).getBytes();
+
+		// get another player
+		int player = (currentTurn +1) %3;
+		DatagramPacket message0 = new DatagramPacket(buffer, buffer.length, players[player].address, players[player].port);
+		
+		// get the other player
+		player = (player +1) %3;
+		DatagramPacket message1 = new DatagramPacket(buffer, buffer.length, players[player].address, players[player].port);
+		
+
+		try {
+			socket.send(message0);
+			socket.send(message1);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

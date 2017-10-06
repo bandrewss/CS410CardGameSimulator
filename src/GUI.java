@@ -132,12 +132,18 @@ public class GUI extends JFrame {
 		setAlwaysOnTop(true);
 	}
 	
-	public void setButtonN(int n, String s) {
+	private void setButton(int n, String s) {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				cardButtons[n].setText(s);
 			}
 		});
+	}
+	
+	public void setButtons(Hand hand) {
+		for(int i = 0; i < hand.getHandSize(); ++i) {
+			setButton(i, hand.getCardByIndex(i).toString());
+		}
 	}
 	
 	public void removeCardButton(String card) {
@@ -149,40 +155,16 @@ public class GUI extends JFrame {
 		}
 			
 	}
-	/*
-	public void createListener(int i) {
-		cardButtons[i].addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-            	jButtonActionPerformed(evt, i);
-            }
-        });
-	}
-	*/
+	
 	public boolean jButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		String message = evt.getActionCommand();
-		appendToDisplay(message);
 		
 		client.playCard(message);
 		
 		return true;   
-    	//hand.playCard(i);
-    	//cardButtons[i].setVisible(false);
     }  
-	
-	/*public void createEvent(int n) {
-		SwingUtilities.invokeLater(new Runnable() {
-			public void run() {
-				JButton singleButton=cardButtons[n];
-				singleButton.addActionListener(new java.awt.event.ActionListener() {
-		            public void actionPerformed(java.awt.event.ActionEvent evt) {
-		            	singleButton(evt);
-		            }
-		        });
-			}
-		});
-	}
+		
 
-	*/
 	/*
 	 * Adds given string to dummy gui
 	 */

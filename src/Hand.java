@@ -38,6 +38,23 @@ public class Hand {
 	}
 	
 	/*
+	 * Bubble sort hand.
+	 */
+	public void sortHand() {
+		Card temp;
+		
+		for(int i = 0; i < handArray.length; ++i) {
+			for(int j = 0; j < handArray.length -1 -i; j++) {
+				if(handArray[j].getRank() > handArray[j +1].getRank()) {
+					temp = handArray[j];
+					handArray[j] = handArray[j+1];
+					handArray[j+1] = temp;
+				}
+			}
+		}
+	}
+	
+	/*
 	 * playCard Method
 	 * Returns Card Object
 	 * Parameter integer 
@@ -77,8 +94,6 @@ public class Hand {
 	}
 	
 	public void showHand() {
-		System.out.println("am here");
-		
 		for(int i =0; i<= handArray.length-1;i++) {
 			if(handArray[i]==null) {
 				
@@ -139,7 +154,7 @@ public class Hand {
 		boolean found = false;
 		
 		for(Card card:handArray) {
-			if(card.getSuit() == suit) {
+			if(card != null && card.getSuit() == suit) {
 				found = true;
 				break;
 			}
@@ -150,6 +165,10 @@ public class Hand {
 	
 	public int getHandSize() {
 		return handSize;
+	}
+	
+	public Card getCardByIndex(int i) {
+		return handArray[i];
 	}
 	
 

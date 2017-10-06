@@ -88,7 +88,7 @@ public class Client implements Runnable {
 	}
 	
 	public void playCard(String s) {
-		Card c = new Card(s.charAt(0), Integer.parseInt(s.substring(1).trim()));
+		Card c = new Card(s);
 		lastCardPlayed = c; 
 		
 		sendPacket(s);
@@ -104,7 +104,8 @@ public class Client implements Runnable {
 				DatagramPacket receiver = new DatagramPacket(data, data.length);
 
 				socket.receive(receiver);
-
+				
+				// process the packet that just came in
 				processPacket(receiver);
 			} catch (IOException e) {
 				System.out.printf("%s\n", e);
@@ -123,23 +124,27 @@ public class Client implements Runnable {
 		String message = new String(packet.getData(), 0, packet.getLength());
 
 		switch (gameState) {
+		// getting first reply from the server
 		case GET_HELLO:
 			if (message.substring(0, 22).equals("Hello, you are player:")) {
 				gameState = GameState.GET_HAND;
 			}
 			break;
+		// getting players hand from the server, one card at a time
 		case GET_HAND:
 			// get suit and number from message
 			hand.recieveCard(message.charAt(6), Integer.parseInt(message.substring(7).trim()));
 			String cardName=message.substring(6);
-			gui.setButtonN(hand.getHandSize() -1, cardName);
 
 			if (hand.isFull()) {
+				hand.sortHand();
+				gui.setButtons(hand);				
 				gui.appendToDisplay("Wait for your turn");
 				gameState = GameState.AWAIT_TURN;
 			}
 
 			break;
+		// wait until the server says its the players turn
 		case AWAIT_TURN:
 			if (message.equals("Your turn")) {
 				gui.appendToDisplay(message);
@@ -147,16 +152,24 @@ public class Client implements Runnable {
 				sendPacket("My turn");
 				gameState = GameState.MY_TURN;
 			}
+			// if the message contains another players play
+			else if(message.substring(0, 6).equals("Player")) {
+				gui.appendToDisplay(message);
+			}
+			// if the game is over
 			else if(message.substring(8).equals("won the game")) {
 				gui.appendToDisplay(message);
 				gameState = GameState.GAME_ENDED;
 			}
 			break;
+		// is players turn
 		case MY_TURN:
+			// if the servers reply matches the card the player requested to play
 			if (message.equals(lastCardPlayed.toString())) {
 				// play the card
-				hand.removeCard(new Card(message.charAt(0), Integer.parseInt(message.substring(1))));
+				hand.removeCard(new Card(message));
 				gui.removeCardButton(message);
+				gui.appendToDisplay(String.format("You played: %s", message));
 				gui.appendToDisplay("Wait for the trick to complete");
 				gameState = GameState.AWAIT_TRICK_COMPLETION;
 			}
@@ -164,26 +177,21 @@ public class Client implements Runnable {
 				gui.appendToDisplay(message);
 			}
 			break;
+		// wait for the other players to complete their trick
 		case AWAIT_TRICK_COMPLETION:
 			if (message.length() >= 20 && message.substring(0, 20).equals("The winner is player")) {
-				gui.appendToDisplay(message);
+				gui.appendToDisplay("Trick ended,");
+				gui.appendToDisplay(String.format("%s\n", message));
 				gameState = GameState.AWAIT_TURN;
 			}
 			
 			break;
+		// game is over
 		case GAME_ENDED:
 			break;
 		}
 	}
-
-	public Hand getHand() {
-		return this.hand;
-		
-	}
 	
-	public boolean myTurn() {
-		return gameState == GameState.MY_TURN; 
-	}
 	
 	// allows multiple clients be run from one class
 	public void run() {
