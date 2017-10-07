@@ -149,8 +149,6 @@ public class Client implements Runnable {
 		case GET_HAND:
 			// get suit and number from message, put it in the hand
 			hand.recieveCard(message.charAt(6), Integer.parseInt(message.substring(7).trim()));
-			
-			gui.appendToDisplay("### getting card");
 
 			if (hand.isFull()) {
 				gui.appendToDisplay("Starting Game:");
