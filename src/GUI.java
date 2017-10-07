@@ -76,9 +76,12 @@ public class GUI extends JFrame {
 		});
 	}
 	
-	public void setRematchButton() {
+	public void setEndGameButtons() {
 		cardButtons[0].setText("Rematch");
 		cardButtons[0].setVisible(true);
+		
+		cardButtons[1].setText("Exit");
+		cardButtons[1].setVisible(true);
 	}
 	
 	/*
@@ -121,6 +124,9 @@ public class GUI extends JFrame {
 			appendToDisplay("Requested a rematch");
 			client.requestRematch();
 			removeAllButtons();
+		}
+		else if(message.equals("Exit")) {
+			client.requestExit();
 		}
 		else {
 			client.playCard(message);

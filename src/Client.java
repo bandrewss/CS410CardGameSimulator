@@ -104,25 +104,30 @@ public class Client implements Runnable {
 	public void requestRematch() {
 		sendPacket("rematch");
 	}
+	
+	public void requestExit() {
+		sendPacket("exit");
+	}
 
 	/*
 	 * Waits for packet to come in and processes it.
 	 */
 	private void waitForPackets() {
-		for (;;) {
+		DatagramPacket receiver = null;
+		
+		do {
 			try {
 				byte[] data = new byte[128];
-				DatagramPacket receiver = new DatagramPacket(data, data.length);
+				receiver = new DatagramPacket(data, data.length);
 
 				socket.receive(receiver);
-				
-				// process the packet that just came in
-				processPacket(receiver);
 			} catch (IOException e) {
 				System.out.printf("%s\n", e);
 				e.printStackTrace();
 			}
-		}
+		} while(receiver != null && processPacket(receiver));
+		// while the packet is not null, 
+		//  and the packet did not contain an exit request
 
 	}
 
@@ -130,10 +135,19 @@ public class Client implements Runnable {
 	 * Processes packet, treats it differently based on current gamestate. In
 	 * charge of changing gamestate when appropriate. 
 	 * Parameters: a datagram packet
+	 * Returns: true unless the sever said to exit the game
 	 */
-	private void processPacket(DatagramPacket packet) {
+	private boolean processPacket(DatagramPacket packet) {
 		String message = new String(packet.getData(), 0, packet.getLength());
-
+		boolean exiting = false;
+		
+		if(message.equals("Quit requested, exiting game")) {
+			gui.appendToDisplay(message);
+			gui.removeAllButtons();
+			
+			exiting = true;
+		}
+		else // else implicitly controls switch	
 		switch (gameState) {
 		// getting first reply from the server
 		case GET_HELLO:
@@ -211,7 +225,7 @@ public class Client implements Runnable {
 				gui.appendToDisplay(String.format("\n%s", message));
 				gui.removeAllButtons();
 				hand.clearHand();
-				gui.setRematchButton();
+				gui.setEndGameButtons();
 				gameState = GameState.AWAIT_REMATCH;
 			}
 			break;
@@ -221,6 +235,8 @@ public class Client implements Runnable {
 				gameState = GameState.GET_HAND;
 			}
 		}
+		
+		return !exiting;
 	}
 	
 	

@@ -17,6 +17,7 @@ import javax.swing.SwingUtilities;
 
 @SuppressWarnings("serial")
 public class Server extends JFrame {
+	final private int ROUNDS = 17;
 	final private int PLAYER_0 = 0;
 	final private int PLAYER_1 = 1;
 	final private int PLAYER_2 = 2;
@@ -75,6 +76,9 @@ public class Server extends JFrame {
 			
 			if(playing) {
 				setupRematch();
+			}
+			else {
+				proclaimGameExit();
 			}
 		}
 		
@@ -141,7 +145,7 @@ public class Server extends JFrame {
 		turnCycle = TurnCycle.FIRST_PLAY;
 		
 		// dictate playing of a trick
-		for(int round = 0; round < 2; ++round) {
+		for(int round = 0; round < ROUNDS; ++round) {
 			playATrick();
 			
 			// set the next turn to the winner of the trick
@@ -658,7 +662,7 @@ public class Server extends JFrame {
 						
 						appendToDisplay(String.format("%d %s for a rematch", rematchCount, rematchCount == 1 ? "request" : "requests"));
 					}
-					else if(message.equals("quit")) {
+					else if(message.equals("exit")) {
 						quitting = true;
 						
 						appendToDisplay("Requested to quit");
@@ -676,6 +680,20 @@ public class Server extends JFrame {
 	 */
 	private void proclaimRematch() {
 		byte[] buffer = String.format("Rematch underway").getBytes();
+		
+		for(PlayerStruct player:players) {
+			DatagramPacket packet = new DatagramPacket(buffer, buffer.length, player.address, player.port);
+			
+			try {
+				socket.send(packet);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	private void proclaimGameExit() {
+		byte[] buffer = String.format("Quit requested, exiting game").getBytes();
 		
 		for(PlayerStruct player:players) {
 			DatagramPacket packet = new DatagramPacket(buffer, buffer.length, player.address, player.port);
