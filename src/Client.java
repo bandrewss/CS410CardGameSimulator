@@ -217,6 +217,9 @@ public class Client implements Runnable {
 				gui.appendToDisplay(String.format("%s\n", message));
 				gameState = GameState.AWAIT_TURN;
 			}
+			else if(message.contains("played")) {
+				gui.appendToDisplay(message);
+			}
 			
 			break;
 		// game is over
