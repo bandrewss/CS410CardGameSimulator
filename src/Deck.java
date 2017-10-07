@@ -11,27 +11,47 @@ public class Deck {
 	final private char suits[]= {HEART, SPADE, DIAMOND, CLUB};
 	
 	//array of 52 cards
-	private int cardCount = DECK_SIZE;
-	private Card deckArray[]= new Card[DECK_SIZE];
+	private int cardCount = 0;
+	private Card deckArray[];
 	
 	
-	//public?
-	Deck(){
-		int index=0;
-		for(int i=0;i<=suits.length-1;i++) {
-			//System.out.println("1Suit");
-			for(int count=2; count<=14;count++)
-			{ 
-			//	System.out.println(index);
-			 Card ob = new Card(suits[i],count);
-			 deckArray[index]= ob;
-			 index++;
-			// System.out.println(count);
-			}
-			//System.out.println("SuitEnd");
-		}
+	/*
+	 * Creates Deck object and builds the deck.
+	 */
+	public Deck(){
+		deckArray = new Card[DECK_SIZE];
+		
+		buildDeck();
 	}//End of Deck
 	
+	
+	/*
+	 * Builds a new deck of 52 cards.
+	 */
+	public void buildDeck() {
+		int index=0;
+		for(int i=0;i<=suits.length-1;i++) {
+			for(int count=2; count<=14;count++) { 
+			 deckArray[index]= new Card(suits[i], count);
+			 index++;
+			 cardCount++;
+			}
+		}
+	}
+	
+	/*
+	 * Clears the whole deck by setting all of the cards to null.
+	 */
+	public void clearDeck() {
+		for(int i = 0; i < deckArray.length; ++i) {
+			deckArray[i] = null;
+			cardCount = 0;
+		}
+	}
+	
+	/*
+	 * Shuffles the existing deck.
+	 */
     public void shuffle() {
     	for(int reshuffle = 0; reshuffle < 7;reshuffle++) {
     		for ( int i = deckArray.length-1; i > 0; i-- ) {
@@ -54,6 +74,7 @@ public class Deck {
     	
     	if(cardIndex >= 0) {
     		returnCard = deckArray[cardIndex];
+    		deckArray[cardIndex] = null;
     		--cardCount;
     	}
     	

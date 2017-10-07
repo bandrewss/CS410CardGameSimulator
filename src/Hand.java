@@ -165,6 +165,17 @@ public class Hand {
 		return found;
 	}
 	
+	/*
+	 * Clears the hand of all cards by setting the whole hand array to null.
+	 */
+	public void clearHand() {
+		for(int i = 0; i < handArray.length; ++i) {
+			handArray[i] = null;
+		}
+		
+		handSize = 0;
+	}
+	
 	public int getHandSize() {
 		return handSize;
 	}

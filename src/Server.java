@@ -66,9 +66,18 @@ public class Server extends JFrame {
 	 * Starts the game logic.
 	 */
 	public void go() {
+		boolean playing = true;
+		
 		setupGame();
 		
-		startGame();
+		while(playing) {
+			playing = startGame();
+			
+			if(playing) {
+				setupRematch();
+			}
+		}
+		
 	}
 
 	/*
@@ -97,9 +106,23 @@ public class Server extends JFrame {
 	}
 	
 	/*
+	 * Sets up a rematch game.
+	 */
+	private void setupRematch() {
+		proclaimRematch();
+		
+		deck.clearDeck();
+		deck.buildDeck();
+		deck.shuffle();
+		
+		dealCards();
+		appendToDisplay("\nStarting Rematch");
+	}
+	
+	/*
 	 * Deals each player 17 cards (entire deck -1)
 	 */
-	private boolean dealCards() {
+	private void dealCards() {
 		int playerNumber;
 		Card card;
 		
@@ -109,16 +132,15 @@ public class Server extends JFrame {
 			sendCardToPlayer(players[playerNumber], playerNumber, card);
 			players[playerNumber].hand.recieveCard(card.getSuit(), card.getNum());
 		}
-		
-		return false;
 	}
 	
 	/*
 	 * After every player has a hand, starts the gameplay.
 	 */
-	private void startGame() {
+	private boolean startGame() {
 		turnCycle = TurnCycle.FIRST_PLAY;
 		
+		// dictate playing of a trick
 		for(int round = 0; round < 2; ++round) {
 			playATrick();
 			
@@ -129,7 +151,11 @@ public class Server extends JFrame {
 		
 		proclaimWinnerOfGame(decideWinnerOfGame());
 		
-		// check to see if rematch is wanted.
+		clearGameData();
+		
+		askForRematch();
+		
+		return waitRematchRequests();
 	}
 	
 	/*
@@ -279,6 +305,9 @@ public class Server extends JFrame {
 				
 		}
 		
+		// set currentTurn to the winner so the winner will play first in case of a rematch.
+		currentTurn = winner;
+		
 		return winner;
 	}
 	
@@ -306,6 +335,20 @@ public class Server extends JFrame {
 		
 		
 		return playerScoreA > playerScoreB ? playerA : playerB;
+	}
+	
+	/*
+	 * Clears all the game data from players
+	 */
+	private void clearGameData() {
+		deck.clearDeck();
+		for(PlayerStruct player:players) {
+			player.hand.clearHand();
+			player.tricks.clear();
+			player.trickCard = null;
+			player.canWin = false;
+			player.wantRematch = false;
+		}
 	}
 	
 	/*
@@ -567,6 +610,82 @@ public class Server extends JFrame {
 		}
 		
 		appendToDisplay(String.format("Game Over. Player%d won.\nFinalScores:\n%s", n, finalScores));
+	}
+	
+	/*
+	 * Asks all players if they want a rematch.
+	 */
+	private void askForRematch() {
+		byte[] buffer = String.format("Would you like a rematch?").getBytes();
+		
+		
+		for(PlayerStruct player:players) {
+		DatagramPacket packet = new DatagramPacket(buffer, buffer.length, player.address, player.port);
+		
+			try {
+				socket.send(packet);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		appendToDisplay("\nAsked Players if they want a rematch.\nWaiting for responses...");
+	}
+	
+	/*
+	 * Waits for incoming packet from all players asking for a rematch, or one packet asking to quit.
+	 * Returns: true if a rematch is requested by all three players, 
+	 *  else false if one of them requests to quit.
+	 */
+	private boolean waitRematchRequests() {
+		int rematchCount = 0;
+		boolean quitting = false;
+		
+		DatagramPacket packet;
+		InetAddress address;
+		String message;
+		
+		while(rematchCount < 3 && !quitting) {
+			packet = waitForPacket();
+			message = new String(packet.getData(), 0, packet.getLength());
+			address = packet.getAddress();
+			
+			for(PlayerStruct player:players) {
+				if(player.address.equals(address) && !player.wantRematch) {
+					if(message.equals("rematch")) {
+						player.wantRematch = true;
+						++rematchCount;
+						
+						appendToDisplay(String.format("%d %s for a rematch", rematchCount, rematchCount == 1 ? "request" : "requests"));
+					}
+					else if(message.equals("quit")) {
+						quitting = true;
+						
+						appendToDisplay("Requested to quit");
+					}
+					break;
+				}
+			}
+		}
+		
+		return !quitting;
+	}
+	
+	/*
+	 * Let all players know a rematch is underway
+	 */
+	private void proclaimRematch() {
+		byte[] buffer = String.format("Rematch underway").getBytes();
+		
+		for(PlayerStruct player:players) {
+			DatagramPacket packet = new DatagramPacket(buffer, buffer.length, player.address, player.port);
+			
+			try {
+				socket.send(packet);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 	}
 	
 	/*

@@ -140,8 +140,14 @@ public class GUI extends JFrame {
 		SwingUtilities.invokeLater(new Runnable() {
 			public void run() {
 				cardButtons[n].setText(s);
+				cardButtons[n].setVisible(true);
 			}
 		});
+	}
+	
+	public void setRematchButton() {
+		cardButtons[0].setText("Rematch");
+		cardButtons[0].setVisible(true);
 	}
 	
 	/*
@@ -168,11 +174,26 @@ public class GUI extends JFrame {
 			
 	}
 	
+	/*
+	 * Sets all the JButtons to invisible.
+	 */
+	public void removeAllButtons() { 
+		for(JButton button:cardButtons) {
+			button.setVisible(false);
+		}
+	}
+	
 	public boolean jButtonActionPerformed(java.awt.event.ActionEvent evt) {
 		String message = evt.getActionCommand();
 		
-		client.playCard(message);
-		
+		if(message.equals("Rematch")) {
+			appendToDisplay("Requested a rematch");
+			client.requestRematch();
+			removeAllButtons();
+		}
+		else {
+			client.playCard(message);
+		}
 		return true;   
     }  
 		

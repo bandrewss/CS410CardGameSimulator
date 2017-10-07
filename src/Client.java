@@ -28,7 +28,7 @@ public class Client implements Runnable {
 	private DatagramSocket socket;
 
 	enum GameState {
-		GET_HELLO, GET_HAND, AWAIT_TURN, MY_TURN, AWAIT_TRICK_COMPLETION, GAME_ENDED
+		GET_HELLO, GET_HAND, AWAIT_TURN, MY_TURN, AWAIT_TRICK_COMPLETION, GAME_ENDED, AWAIT_REMATCH
 	}
 
 	private GameState gameState;
@@ -97,6 +97,13 @@ public class Client implements Runnable {
 		
 		sendPacket(s);
 	}
+	
+	/*
+	 * Sends to the server that a rematch is desired by the player
+	 */
+	public void requestRematch() {
+		sendPacket("rematch");
+	}
 
 	/*
 	 * Waits for packet to come in and processes it.
@@ -142,8 +149,11 @@ public class Client implements Runnable {
 		case GET_HAND:
 			// get suit and number from message, put it in the hand
 			hand.recieveCard(message.charAt(6), Integer.parseInt(message.substring(7).trim()));
+			
+			gui.appendToDisplay("### getting card");
 
 			if (hand.isFull()) {
+				gui.appendToDisplay("Starting Game:");
 				hand.sortHand();
 				gui.setButtons(hand);				
 				gui.appendToDisplay("Wait for your turn");
@@ -152,22 +162,24 @@ public class Client implements Runnable {
 
 			break;
 		// wait until the server says its the players turn
-		case AWAIT_TURN:
+		case AWAIT_TURN:;
 			if (message.equals("Your turn")) {
 				gui.appendToDisplay(message);
 				// ack turn
 				sendPacket("My turn");
 				gameState = GameState.MY_TURN;
 			}
+			// if the game is over
+			//substring(8, 20)
+			else if(message.contains("won the game")) {
+				gui.appendToDisplay(message);
+				gameState = GameState.GAME_ENDED;
+			}
 			// if the message contains another players play
 			else if(message.substring(0, 6).equals("Player")) {
 				gui.appendToDisplay(message);
 			}
-			// if the game is over
-			else if(message.substring(8).equals("won the game")) {
-				gui.appendToDisplay(message);
-				gameState = GameState.GAME_ENDED;
-			}
+			
 			break;
 		// is players turn
 		case MY_TURN:
@@ -197,7 +209,19 @@ public class Client implements Runnable {
 			break;
 		// game is over
 		case GAME_ENDED:
+			if(message.equals("Would you like a rematch?")) {
+				gui.appendToDisplay(String.format("\n%s", message));
+				gui.removeAllButtons();
+				hand.clearHand();
+				gui.setRematchButton();
+				gameState = GameState.AWAIT_REMATCH;
+			}
 			break;
+		case AWAIT_REMATCH:
+			if(message.equals("Rematch underway")) {
+				gui.appendToDisplay("Starting Rematch:");
+				gameState = GameState.GET_HAND;
+			}
 		}
 	}
 	

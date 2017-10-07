@@ -15,6 +15,7 @@ public class PlayerStruct {
 	public Hand hand;
 	public Card trickCard;
 	public boolean canWin;
+	public boolean wantRematch;
 	
 	public String name;
 
@@ -24,5 +25,6 @@ public class PlayerStruct {
 		hand = new Hand();
 		trickCard = null;
 		canWin = false;
+		wantRematch = false;
 	}
 }
