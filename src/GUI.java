@@ -32,6 +32,7 @@ public class GUI extends JFrame {
 			String cardName =String.format("%d", i);
 			cardButtons[i].setText(cardName);
 			gridPanel.add(cardButtons[i]);
+			cardButtons[i].setVisible(false);
 			
 			cardButtons[i].addActionListener(new java.awt.event.ActionListener() {
 	            public void actionPerformed(java.awt.event.ActionEvent evt) {
