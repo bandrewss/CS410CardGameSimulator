@@ -1,20 +1,27 @@
-
+/*
+ * Matthew Ladin, Waheed Khan,  Ben Andrews
+ * Hand Object;
+ */
 public class Hand {
+	/*
+	 * Unicode for Suits.
+	 */
 	final private char HEART= '\u2665';
 	final private char SPADE= '\u2660';
 	final private char DIAMOND= '\u2666';
 	final private char CLUB= '\u2663';
+	
 	final private int MAX_HAND_SIZE = 17;
 	
 	private int handSize = 0;
 	
-
-	
 	private Card handArray[]= new Card[MAX_HAND_SIZE];
 	Card play;
 	
-	//public?
-	Hand(){
+	/*
+	 * Create the Base Hand object (Hand is an array of Cards objects)
+	 */
+	public Hand(){
 		for(int i =0;i<=handArray.length-1;i++) 
 		{
 			handArray[i] =null;
@@ -57,11 +64,10 @@ public class Hand {
 	}
 	
 	/*
-	 * playCard Method
+	 * 
+	 * playCard Method: Send the card if Card is available in the Hand array
 	 * Returns Card Object
 	 * Parameter integer 
-	 *
-	 * 
 	 */
 	public Card playCard(int i) {
 		if(handArray[i]==null||i>handArray.length) {
@@ -95,6 +101,7 @@ public class Hand {
 		return containedCard;
 	}
 	
+	
 	public void showHand() {
 		for(int i =0; i<= handArray.length-1;i++) {
 			if(handArray[i]==null) {
@@ -107,22 +114,15 @@ public class Hand {
 		}
 	}
 	
+	/*
+	 * Returns a Sting of the Card Object form the Hand Array
+	 * Parameter int location of the card
+	 */
 	public String showCard(int postion) {
 		String singleCard=handArray[postion].toString();
-		//System.out.println(singleCard);
 		return singleCard;
 	}
-	
-	public int findCardIndex(Card mycard) {
-		int index=(Integer) null;
-		for(int i=0;i<handArray.length-1;i++) {
-			if(handArray[i].equals(mycard)) {
-				index=i;
-			}
-		}
-		
-		return index;
-	}
+
 	
 	/*
 	 * Returns true if the players hand is full
@@ -167,6 +167,7 @@ public class Hand {
 	
 	/*
 	 * Clears the hand of all cards by setting the whole hand array to null.
+	 * Returns:
 	 */
 	public void clearHand() {
 		for(int i = 0; i < handArray.length; ++i) {
@@ -176,10 +177,19 @@ public class Hand {
 		handSize = 0;
 	}
 	
+	/*
+	 * Get the hand size
+	 * Returns Int
+	 */
 	public int getHandSize() {
 		return handSize;
 	}
 	
+	/*
+	 * Gets a Card object from the hand Array at index i
+	 * Parameters: Int
+	 * Returns: Card Object
+	 */
 	public Card getCardByIndex(int i) {
 		return handArray[i];
 	}

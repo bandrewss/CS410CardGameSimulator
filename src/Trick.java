@@ -1,4 +1,7 @@
-
+/*
+ * Ben Andrews
+ * Trick Object;
+ */
 public class Trick {
 	Card a, b, c;
 	

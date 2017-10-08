@@ -1,4 +1,7 @@
-
+/*
+ * Matthew Ladin, Waheed Khan, Ben Andrews
+ * Deck Object;
+ */
 public class Deck {
 
 // variables for symbols
